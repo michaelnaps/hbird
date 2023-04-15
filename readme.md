@@ -1,4 +1,4 @@
-### **Hummingbird Robot**
+### **Hummingbird Model**
 
 This repository serves as the testing grounds for my joint project in the Boston University classes EC 710/ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D steered vehicle.
 
