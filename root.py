@@ -19,9 +19,9 @@ def model(x, u):
         x[7],
         x[8],
         x[9],
-        F*math.cos(x[3])*math.cos(x[4]),
-        F*math.cos(x[3])*math.sin(x[4]),
-        F*math.sin(x[3]),
+        1/m*F*math.cos(x[3])*math.cos(x[4]),
+        1/m*F*math.cos(x[3])*math.sin(x[4]),
+        1/m*(F*math.sin(x[3]) - m*g),
         tauZ,
         tauXY
     ];
