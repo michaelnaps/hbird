@@ -83,9 +83,9 @@ $$
         x_8 \\
         x_9 \\
         x_{10} \\
-        u_1 \cos(x_4) \cos(x_5) \\
-        u_1 \cos(x_4) \sin(x_5) \\
-        u_1 \sin(x_4) \\
+        \frac{1}{m} u_1 \cos(x_4) \cos(x_5) \\
+        \frac{1}{m} \cos(x_4) \sin(x_5) \\
+        \frac{1}{m} (u_1 \sin(x_4) - mg) \\
         u_2 \\
         u_3
     \end{bmatrix}
