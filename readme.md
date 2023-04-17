@@ -2,7 +2,7 @@
 
 This repository serves as the testing grounds for my joint project in the Boston University classes EC 710/ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D steered vehicle.
 
-The control parameters are a single lift force pushing through the center of mass (COM) and norm to the bird's x-y axis and the appropriate Euler angles (check?).
+The control paramters are a single lift force pushing the the bird's personal $z$-axes, and two rotations angles; $\theta$ which defines the birds rotation around the world frame $z$-axis, and $\delta$ which defines the bird's offset from the $z$-axis.
 
 The state space form, represented by a second-order system of five continuous parameters is shown below.
 
@@ -85,6 +85,36 @@ $$
         x_{10} \\
         \frac{1}{m} u_1 \cos(x_4) \cos(x_5) \\
         \frac{1}{m} u_1 \cos(x_4) \sin(x_5) \\
+        \frac{1}{m} (u_1 \sin(x_4) - mg) \\
+        u_2 \\
+        u_3
+    \end{bmatrix}
+$$
+
+In order to collapse this system into the first-order domain, we will implement the discrete system form by exploting the integration function below.
+
+$$
+    x_{k+1} = x_k + \int_{t_0}^{t_0+T} f(t,x,u) dt
+$$
+
+Because the hummingbird system is time-invariant, we can set $t_0=0$ and solve for $x_{k+1}$. That is,
+
+$$
+    x_{k+1} = x_k + Tf(t,x,u)
+$$
+
+Making our discrete first-order system dynamics...
+
+$$
+    x_{k+1} = \begin{bmatrix}
+        x_1 \\
+        x_2 \\
+        x_3 \\
+        x_4 \\
+        x_5
+    \end{bmatrix} + T \begin{bmatrix}
+        \frac{1}{m} (u_1 \cos(x_4) \cos(x_5)) \\
+        \frac{1}{m} (u_1 \cos(x_4) \sin(x_5)) \\
         \frac{1}{m} (u_1 \sin(x_4) - mg) \\
         u_2 \\
         u_3
