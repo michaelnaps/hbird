@@ -3,6 +3,7 @@ sys.path.insert(0, '/home/michaelnaps/prog/mpc');
 
 
 import mpc
+import numpy as np
 from numpy import random as rd
 
 import math
@@ -20,7 +21,7 @@ dt = 0.01;
 
 
 # model and cost functions
-def model(x, u, mpc_var):
+def model(x, u, _):
     F     = u[0];
     TauZ  = u[1];
     TauXY = u[2];
@@ -34,6 +35,41 @@ def model(x, u, mpc_var):
     ];
 
     return xplus;
+
+def linearized(x, u, _):
+    F     = u[0];
+    TauZ  = u[1];
+    TauXY = u[2];
+
+    w = dt/m;
+
+    xd = _.params;
+    x1 = xd[0];  x2 = xd[1];
+    x3 = xd[2];  x4 = xd[3];
+    x5 = xd[4];
+
+    A = np.array( [
+        [1, 0, 0, -w*F*np.sin(x4)*np.cos(x5), -w*F*np.cos(x4)*np.sin(x5)],
+        [0, 1, 0, -w*F*np.sin(x4)*np.sin(x5),  w*F*np.cos(x4)*np.sin(x5)],
+        [0, 0, 1,  w*np.cos(x4),               0                        ],
+        [0, 0, 0,  1,                          0                        ],
+        [0, 0, 0,  0,                          1                        ]
+    ] );
+
+    B = np.array( [
+        [w*np.cos(x4)*np.cos(x5), 0,  0 ],
+        [w*np.cos(x4)*np.sin(x5), 0,  0 ],
+        [w*np.sin(x4)           , 0,  0 ],
+        [0,                       dt, 0 ],
+        [0,                       0,  dt]
+    ] );
+
+    print(A);
+    print(B);
+
+    xplus = A@np.array(x)[:,None] + B@np.array(u)[:,None];
+
+    return xplus.reshape(Nx,);
 
 def cost(mpc_var, xlist, ulist):
     xd = mpc_var.params;
@@ -60,7 +96,5 @@ if __name__ == "__main__":
         max_iter=100, model_type=model_type);
     mpc_var.setAlpha(0.1);
 
-    # solve single time-step
-    uinit = [0 for i in range(Nu*PH)];
-    sim_time = 1;
-    print( mpc_var.sim_root(sim_time, x0, uinit, output=1)[1][-1] );
+    # check linear model
+    print( linearized(xd, [0,0,0], mpc_var) );
