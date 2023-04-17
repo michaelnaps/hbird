@@ -4,6 +4,7 @@ sys.path.insert(0, '/home/michaelnaps/prog/mpc');
 
 import mpc
 import numpy as np
+from numpy import pi
 from numpy import random as rd
 
 import math
@@ -13,7 +14,7 @@ import matplotlib.pyplot as plt
 # hyper parameters
 m = 1;
 g = 9.81;
-a = 0.80;  # discount rate
+a = 1.00;  # discount rate
 eps = 0.1;
 Nx = 5;
 Nu = 3;
@@ -71,6 +72,9 @@ def linearized(x, u, _):
 
     return xplus.reshape(Nx,);
 
+def control(x):
+    return [m*g,0,0];
+
 def cost(mpc_var, xlist, ulist):
     xd = mpc_var.params;
     k = [10,10,100,1,1];
@@ -83,7 +87,7 @@ def cost(mpc_var, xlist, ulist):
 
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = [0,0,1,0,0];
+    xd = [0,0,1,pi/2,0];
     x0 = [xd[i]+(2*eps*rd.rand()-eps) for i in range(Nx)];
 
     # create MPC class variable
@@ -97,4 +101,4 @@ if __name__ == "__main__":
     mpc_var.setAlpha(0.1);
 
     # check linear model
-    print( linearized(xd, [0,0,0], mpc_var) );
+    print( model(xd, control(xd), None) );
