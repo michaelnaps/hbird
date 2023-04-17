@@ -75,8 +75,8 @@ def linearized(x, u, _):
 def control(x):
     return [m*g,0,0];
 
-def cost(mpc_var, xlist, ulist):
-    xd = mpc_var.params;
+def cost(mvar, xlist, ulist):
+    xd = mvar.params;
     k = [10,10,100,1,1];
 
     C = 0;
@@ -95,14 +95,14 @@ if __name__ == "__main__":
     kl = 1;
     model_type = 'discrete';
     params = xd;
-    mpc_var = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
+    mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
         num_ssvar=Nx, PH_length=PH, knot_length=kl, time_step=dt,
         max_iter=100, model_type=model_type);
-    mpc_var.setAlpha(0.1);
+    mvar.setAlpha(0.1);
 
     # solve single step
     uinit = [0 for i in range(Nu*PH)];
-    u0 = mpc_var.solve(x0, uinit, output=1)[0];
+    u0 = mvar.solve(x0, uinit, output=0)[0];
 
     j = 0;
     for i in range(PH):
