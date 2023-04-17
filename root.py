@@ -100,5 +100,11 @@ if __name__ == "__main__":
         max_iter=100, model_type=model_type);
     mpc_var.setAlpha(0.1);
 
-    # check linear model
-    print( model(xd, control(xd), None) );
+    # solve single step
+    uinit = [0 for i in range(Nu*PH)];
+    u0 = mpc_var.solve(x0, uinit, output=1)[0];
+
+    j = 0;
+    for i in range(PH):
+        print( u0[j:j+Nu] );
+        j += Nu;
