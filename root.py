@@ -172,14 +172,14 @@ def control(x):
 def cost(mvar, xlist, ulist):
     xd = mvar.params.xd;
     k = [10,10,100,1,1];
+    ku = 1;
 
     C = 0;  j = 0;
     for i, x in enumerate(xlist):
         C += (a**i)*sum([k[i]*(x[i] - xd[i])**2 for i in range(Nx)]);
-        if i < mvar.PH:
-            C += 1/(10 - ulist[j]);
-            j += Nu;
-
+        # if i < mvar.PH:
+        #     C += ku/(10 - abs(ulist[j]));
+        #     j += Nu;
 
     return C;
 
@@ -191,16 +191,33 @@ if __name__ == "__main__":
     x0 = [0,0,0,pi/2,0];
 
     # create MPC class variable
-    PH = 10;
+    PH = 15;
     kl = 1;
     model_type = 'discrete';
     params = Vehicle(np.zeros((Nx,)), xd);
     mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
         num_ssvar=Nx, PH_length=PH, knot_length=kl, time_step=dt,
         max_iter=1000, model_type=model_type);
-    mvar.setAlpha(0.1);
+    mvar.setAlpha(1);
 
     # solve single step
-    sim_time = 1;
+    sim_time = 0.50;
     uinit = [0 for i in range(Nu*PH)];
-    mvar.sim_root(sim_time, x0, uinit, output=1);
+    sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
+
+    T = np.array( sim_results[0] );
+    xlist = np.array( sim_results[1] );
+    ulist = np.array( sim_results[2] );
+
+    # plot results
+    fig, axs = plt.subplots(3,1);
+    axs[0].plot(T, xlist[:,0]);
+    axs[0].set_ylim( (-1,1) );
+
+    axs[1].plot(T, xlist[:,1]);
+    axs[1].set_ylim( (-1,1) );
+
+    axs[2].plot(T, xlist[:,2]);
+    # axs[1].set_ylim( (-1,1) );
+
+    plt.show();
