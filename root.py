@@ -70,6 +70,9 @@ class Vehicle:
         plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
+        plt.show(block=0);
+        plt.close('all');
+
         # plot pause
         self.pause = pause;
 
@@ -122,9 +125,9 @@ def model(x, u, _):
     TauXY = u[2];
 
     xplus = [
-        x[0] + dt/m*F*math.cos(x[3])*math.cos(x[4]),
-        x[1] + dt/m*F*math.cos(x[3])*math.sin(x[4]),
-        x[2] + dt/m*(F*math.sin(x[3]) - m*g),
+        x[0] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
+        x[1] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
+        x[2] + dt/m*(F*math.cos(x[3]) - m*g),
         x[3] + dt*TauZ,
         x[4] + dt*TauXY
     ];
@@ -187,8 +190,8 @@ def cost(mvar, xlist, ulist):
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = [0,0,1,pi/2,0];
-    x0 = [0,0,0,pi/2,0];
+    xd = [0,0,1,0,0];
+    x0 = [0,0,0,0,0];
 
     # create MPC class variable
     PH = 15;
@@ -200,24 +203,24 @@ if __name__ == "__main__":
         max_iter=1000, model_type=model_type);
     mvar.setAlpha(1);
 
-    # # solve single step
-    # sim_time = 0.50;
-    # uinit = [0 for i in range(Nu*PH)];
-    # sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
+    # solve single step
+    sim_time = 0.50;
+    uinit = [0 for i in range(Nu*PH)];
+    sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
 
-    # T = np.array( sim_results[0] );
-    # xlist = np.array( sim_results[1] );
-    # ulist = np.array( sim_results[2] );
+    T = np.array( sim_results[0] );
+    xlist = np.array( sim_results[1] );
+    ulist = np.array( sim_results[2] );
 
-    # # plot results
-    # fig, axs = plt.subplots(3,1);
-    # axs[0].plot(T, xlist[:,0]);
-    # axs[0].set_ylim( (-1,1) );
+    # plot results
+    fig, axs = plt.subplots(3,1);
+    axs[0].plot(T, xlist[:,0]);
+    axs[0].set_ylim( (-1,1) );
 
-    # axs[1].plot(T, xlist[:,1]);
+    axs[1].plot(T, xlist[:,1]);
+    axs[1].set_ylim( (-1,1) );
+
+    axs[2].plot(T, xlist[:,2]);
     # axs[1].set_ylim( (-1,1) );
 
-    # axs[2].plot(T, xlist[:,2]);
-    # # axs[1].set_ylim( (-1,1) );
-
-    # plt.show();
+    plt.show();
