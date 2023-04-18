@@ -200,24 +200,24 @@ if __name__ == "__main__":
         max_iter=1000, model_type=model_type);
     mvar.setAlpha(1);
 
-    # solve single step
-    sim_time = 0.50;
-    uinit = [0 for i in range(Nu*PH)];
-    sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
+    # # solve single step
+    # sim_time = 0.50;
+    # uinit = [0 for i in range(Nu*PH)];
+    # sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
 
-    T = np.array( sim_results[0] );
-    xlist = np.array( sim_results[1] );
-    ulist = np.array( sim_results[2] );
+    # T = np.array( sim_results[0] );
+    # xlist = np.array( sim_results[1] );
+    # ulist = np.array( sim_results[2] );
 
-    # plot results
-    fig, axs = plt.subplots(3,1);
-    axs[0].plot(T, xlist[:,0]);
-    axs[0].set_ylim( (-1,1) );
+    # # plot results
+    # fig, axs = plt.subplots(3,1);
+    # axs[0].plot(T, xlist[:,0]);
+    # axs[0].set_ylim( (-1,1) );
 
-    axs[1].plot(T, xlist[:,1]);
-    axs[1].set_ylim( (-1,1) );
-
-    axs[2].plot(T, xlist[:,2]);
+    # axs[1].plot(T, xlist[:,1]);
     # axs[1].set_ylim( (-1,1) );
 
-    plt.show();
+    # axs[2].plot(T, xlist[:,2]);
+    # # axs[1].set_ylim( (-1,1) );
+
+    # plt.show();
