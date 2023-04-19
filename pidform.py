@@ -11,6 +11,9 @@ import mpl_toolkits.mplot3d as plt3d
 import matplotlib.patches as patch
 import matplotlib.path as path
 
+# suppress print statements
+np.set_printoptions(precision=5, suppress=True);
+
 
 # hyper parameters
 m = 1;
@@ -186,11 +189,11 @@ def linearized(x, u, _):
     return xplus.reshape(Nx,);
 
 def control(x):
-    k = [1, 1, 1];
+    k = [0.01, 0.001, 0.0001];
 
     v1 = -k[0]*x[0] - k[1]*x[5] - k[2]*x[10];
     v2 = -k[0]*x[1] - k[1]*x[6] - k[2]*x[11];
-    v3 = -k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
+    v3 = m*g - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
     v = np.vstack( (v1, v2, v3) );
 
     u1 = [np.linalg.norm( v )];
@@ -202,31 +205,41 @@ def control(x):
     return u;
 
 def noise(eps, shape=(1,1)):
+    if len(shape) == 1:
+        return 2*eps*np.random.rand(shape[0]) - eps;
     return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    eps = 1;
+
     xd = np.zeros( (Nx,1) );
-    x0 = xd + noise(eps, (Nx,1));
 
-    # simulate for 10 seconds
-    simControl = lambda t, x: model(x, control(x[:,None])).reshape(Nx,);
-    sim_results = solve_ivp(simControl, (0, 10), x0.reshape(Nx,));
+    eps = 1;
+    disturbance = np.array( [int(i==2)*noise(eps, (1,)) for i in range(Nx)] );
+    x0 = xd + disturbance;
 
-    T = sim_results.t/10;
-    xlist = sim_results.y;
+    # simulation
+    dt = 0.001
+    T = 0.02;  Nt = round(T/dt) + 1;
+    tlist = [[i*dt for i in range(Nt)]];
+
+    # main simulation loop
+    x = x0;
+    xlist = np.empty( (Nx,Nt) );
+    for i in range(Nt):
+        x = model(x, control(x));
+        xlist[:,i] = x[:,0];
 
     # plot results
     fig, axs = plt.subplots(3,1);
-    axs[0].plot(T, xlist[0,:]);
+    axs[0].plot(tlist[0], xlist[0,:]);
     # axs[0].set_ylim( (-1,1) );
 
-    axs[1].plot(T, xlist[1,:]);
+    axs[1].plot(tlist[0], xlist[1,:]);
     # axs[1].set_ylim( (-1,1) );
 
-    axs[2].plot(T, xlist[2,:]);
+    axs[2].plot(tlist[0], xlist[2,:]);
     # axs[1].set_ylim( (-1,1) );
 
     plt.show();
