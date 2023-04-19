@@ -4,10 +4,8 @@ sys.path.insert(0, '/home/michaelnaps/prog/mpc');
 
 import mpc
 import numpy as np
-from numpy import pi
-from numpy import random as rd
+from scipy.integrate import solve_ivp
 
-import math
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d as plt3d
 import matplotlib.patches as patch
@@ -19,7 +17,7 @@ m = 1;
 g = 9.81;
 a = 1.00;  # discount rate
 eps = 0.1;
-Nx = 5;
+Nx = 15;
 Nu = 3;
 dt = 0.01;
 
@@ -119,20 +117,38 @@ class Vehicle:
 
 
 # model and cost functions
-def model(x, u, _):
+def model(x, u):
     F     = u[0];
     TauZ  = u[1];
     TauXY = u[2];
 
-    xplus = [
-        x[0] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
-        x[1] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
-        x[2] + dt/m*(F*math.cos(x[3]) - m*g),
-        x[3] + dt*TauZ,
-        x[4] + dt*TauXY
-    ];
+    dx0 = np.array( [
+        x[5],
+        x[6],
+        x[7],
+        x[8],
+        x[9]
+    ] ).reshape(5,1);
 
-    return xplus;
+    dx1 = np.array( [
+        F*np.sin(x[3])*np.cos(x[4]),
+        F*np.sin(x[3])*np.sin(x[4]),
+        (F*np.cos(x[3]) - m*g),
+        m*TauZ,
+        m*TauXY
+    ] ).reshape(5,1);
+
+    dx2 = np.array( [
+        x[0],
+        x[1],
+        x[2],
+        x[3],
+        x[4]
+    ] ).reshape(5,1);
+
+    dx = np.vstack( (dx0, dx1, dx2) );
+
+    return dx;
 
 def linearized(x, u, _):
     F     = u[0];
@@ -170,57 +186,47 @@ def linearized(x, u, _):
     return xplus.reshape(Nx,);
 
 def control(x):
-    return [m*g,0,0];
+    k = [1, 1, 1];
 
-def cost(mvar, xlist, ulist):
-    xd = mvar.params.xd;
-    k = [10,10,100,1,1];
-    ku = 1;
+    v1 = -k[0]*x[0] - k[1]*x[5] - k[2]*x[10];
+    v2 = -k[0]*x[1] - k[1]*x[6] - k[2]*x[11];
+    v3 = -k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
+    v = np.vstack( (v1, v2, v3) );
 
-    C = 0;  j = 0;
-    for i, x in enumerate(xlist):
-        C += (a**i)*sum([k[i]*(x[i] - xd[i])**2 for i in range(Nx)]);
-        # if i < mvar.PH:
-        #     C += ku/(10 - abs(ulist[j]));
-        #     j += Nu;
+    u1 = [np.linalg.norm( v )];
+    u2 = -k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
+    u3 = -k[0]*x[4] - k[1]*x[9] - k[2]*x[14];
 
-    return C;
+    u = np.vstack( (u1, u2, u3) );
 
+    return u;
+
+def noise(eps, shape=(1,1)):
+    return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = [0,0,1,0,0];
-    x0 = [0,0,0,0,0];
+    eps = 1;
+    xd = np.zeros( (Nx,1) );
+    x0 = xd + noise(eps, (Nx,1));
 
-    # create MPC class variable
-    PH = 15;
-    kl = 1;
-    model_type = 'discrete';
-    params = Vehicle(np.zeros((Nx,)), xd);
-    mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
-        num_ssvar=Nx, PH_length=PH, knot_length=kl, time_step=dt,
-        max_iter=1000, model_type=model_type);
-    mvar.setAlpha(1);
+    # simulate for 10 seconds
+    simControl = lambda t, x: model(x, control(x[:,None])).reshape(Nx,);
+    sim_results = solve_ivp(simControl, (0, 10), x0.reshape(Nx,));
 
-    # solve single step
-    sim_time = 0.50;
-    uinit = [0 for i in range(Nu*PH)];
-    sim_results = mvar.sim_root(sim_time, x0, uinit, output=1);
-
-    T = np.array( sim_results[0] );
-    xlist = np.array( sim_results[1] );
-    ulist = np.array( sim_results[2] );
+    T = sim_results.t/10;
+    xlist = sim_results.y;
 
     # plot results
     fig, axs = plt.subplots(3,1);
-    axs[0].plot(T, xlist[:,0]);
-    axs[0].set_ylim( (-1,1) );
+    axs[0].plot(T, xlist[0,:]);
+    # axs[0].set_ylim( (-1,1) );
 
-    axs[1].plot(T, xlist[:,1]);
-    axs[1].set_ylim( (-1,1) );
+    axs[1].plot(T, xlist[1,:]);
+    # axs[1].set_ylim( (-1,1) );
 
-    axs[2].plot(T, xlist[:,2]);
+    axs[2].plot(T, xlist[2,:]);
     # axs[1].set_ylim( (-1,1) );
 
     plt.show();
