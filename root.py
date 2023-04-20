@@ -23,7 +23,7 @@ eps = 0.1;
 dNx = 5;
 cNx = 15;
 Nu = 3;
-dt = 0.01;
+dt = 0.1;
 
 # simulation vehicle entity
 class Vehicle:
