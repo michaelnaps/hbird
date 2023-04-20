@@ -153,32 +153,24 @@ def model(x, u):
 
     return dx;
 
-def linearized(x, u, _):
+def linearized(x, u, xd):
     F     = u[0];
     TauZ  = u[1];
     TauXY = u[2];
 
-    w = dt/m;
-
-    xd = _.params;
     x1 = xd[0];  x2 = xd[1];
     x3 = xd[2];  x4 = xd[3];
     x5 = xd[4];
 
-    A = np.array( [
-        [1, 0, 0, -w*F*np.sin(x4)*np.cos(x5), -w*F*np.cos(x4)*np.sin(x5)],
-        [0, 1, 0, -w*F*np.sin(x4)*np.sin(x5),  w*F*np.cos(x4)*np.sin(x5)],
-        [0, 0, 1,  w*np.cos(x4),               0                        ],
-        [0, 0, 0,  1,                          0                        ],
-        [0, 0, 0,  0,                          1                        ]
-    ] );
-
-    B = np.array( [
-        [w*np.cos(x4)*np.cos(x5), 0,  0 ],
-        [w*np.cos(x4)*np.sin(x5), 0,  0 ],
-        [w*np.sin(x4)           , 0,  0 ],
-        [0,                       dt, 0 ],
-        [0,                       0,  dt]
+    n = 5;
+    Ax0 = np.hstack( (np.zeros( (n,n) ), np.eye(n), np.zeros( (n,n) )) );
+    Ay  = np.hstack( (np.eye(n), np.zeros( (n,2*n) )) );
+    Ax1 = np.array( [
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 1]
     ] );
 
     print(A);
@@ -189,16 +181,12 @@ def linearized(x, u, _):
     return xplus.reshape(Nx,);
 
 def control(x):
-    k = [0.01, 0.001, 0.0001];
+    k = [0.95, 0.05, 0];
+    d = [0, 0, 0];
 
-    v1 = 0; #-k[0]*x[0] - k[1]*x[5] - k[2]*x[10];
-    v2 = 0; #-k[0]*x[1] - k[1]*x[6] - k[2]*x[11];
-    v3 = m*g - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
-    v = np.vstack( (v1, v2, v3) );
-
-    u1 = [np.linalg.norm( v )];
-    u2 = -k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
-    u3 = -k[0]*x[4] - k[1]*x[9] - k[2]*x[14];
+    u1 = d[0] - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
+    u2 = d[1] - k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
+    u3 = d[2] - k[0]*x[4] - k[1]*x[9] - k[2]*x[14];
 
     u = np.vstack( (u1, u2, u3) );
 
@@ -214,14 +202,13 @@ if __name__ == "__main__":
     # initialize starting and goal states
     xd = np.zeros( (Nx,1) );
 
-    eps = 1;
-    disturbance = np.array( [int(i==2)*noise(eps, (1,)) for i in range(Nx)] );
+    eps = 0.1;
+    disturbance = noise(eps, xd.shape);
     x0 = xd + disturbance;
-    print(x0);
+    # print(x0);
 
     # simulation
-    dt = 0.001
-    T = 0.02;  Nt = round(T/dt) + 1;
+    T = 2.5;  Nt = round(T/dt) + 1;
     tlist = [[i*dt for i in range(Nt)]];
 
     # main simulation loop
@@ -230,16 +217,12 @@ if __name__ == "__main__":
     for i in range(Nt):
         x = model(x, control(x));
         xlist[:,i] = x[:,0];
+        print(x);
 
     # plot results
-    fig, axs = plt.subplots(3,1);
-    axs[0].plot(tlist[0], xlist[0,:]);
-    # axs[0].set_ylim( (-1,1) );
+    fig, axsList = plt.subplots(Nx,1);
 
-    axs[1].plot(tlist[0], xlist[1,:]);
-    # axs[1].set_ylim( (-1,1) );
-
-    axs[2].plot(tlist[0], xlist[2,:]);
-    # axs[1].set_ylim( (-1,1) );
+    for i, axs in enumerate(axsList):
+        axs.plot(tlist[0], xlist[i,:]);
 
     plt.show();
