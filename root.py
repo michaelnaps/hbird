@@ -154,7 +154,6 @@ class DynamicProgramming:
         if N == 1:
             cost = lambda u: self.pcost(x0,u) + self.tcost( self.model(x0,u) );
             ustar, Jstar = self.minimize(cost, uinit);
-            print(ustar);
             return ustar, Jstar, self.model( x0,ustar );
 
         cost = lambda u: self.pcost( x0,u ) + self.forward( self.model(x0, u), u, N=N-1 )[1];

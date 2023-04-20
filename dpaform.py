@@ -34,7 +34,7 @@ if __name__ == "__main__":
     x0 = [0,0,0.1,0,0];
 
     # create MPC class variable
-    N = 2;
+    N = 3;
     model_type = 'discrete';
     vhc = Vehicle(x0, xd);
     dpvar = DynamicProgramming(pcost, tcost, model, N, dNx, Nu,
