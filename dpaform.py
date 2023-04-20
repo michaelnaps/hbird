@@ -17,16 +17,15 @@ def model(x, u):
     return xplus;
 
 def pcost(x, u):
-    dNx = len(x);
-    Nu = len(u);
-    J = sum( [x[i]**2 for i in range(dNx)] );
-    J += sum( [(u[i]-1)**2 for i in range(Nu)] );
+    kx = 100;
+    ku = 0;
+    J = sum( [kx*x[i]**2 for i in range(dNx)] );
+    J += sum( [ku*u[i]**2 for i in range(Nu)] );
     return J;
 
-def tcost(x):
-    dNx = len(x);
-    J = sum( [x[i]**2 for i in range(dNx)] );
-    return J;
+def tcost(xN):
+    gN = sum( [xN[i]**2 for i in range(dNx)] );
+    return gN;
 
 # main execution block
 if __name__ == "__main__":
@@ -35,17 +34,21 @@ if __name__ == "__main__":
     x0 = [0,0,0,0,0];
 
     # create MPC class variable
-    PH = 15;
-    kl = 1;
+    N = 10;
     model_type = 'discrete';
     vhc = Vehicle(x0, xd);
-    dpvar = dpa.DynamicProgramming(pcost, tcost, model, PH, dNx, Nu,
-        params=vhc, max_iter=100);
-    dpvar.setAlpha(0.1);
+    dpvar = dpa.DynamicProgramming(pcost, tcost, model, N, dNx, Nu,
+        params=vhc, max_iter=-1);
+    dpvar.setAlpha(1);
 
     # test DPA
     uinit = [0 for i in range(Nu)]
-    print( dpvar.forward(x0, uinit, N=1) );
+    cost = lambda u: pcost(x0,u) + tcost( model(x0,u) );
+    ustar, Jstar = dpvar.minimize(cost, uinit);
+
+    print(ustar, Jstar);
+    print(model(x0,ustar));
+
 
     # T = np.array( sim_results[0] );
     # xlist = np.array( sim_results[1] );

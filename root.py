@@ -19,7 +19,6 @@ import matplotlib.path as path
 # hyper parameters
 m = 1;
 g = 9.81;
-a = 1.00;  # discount rate
 eps = 0.1;
 dNx = 5;
 cNx = 15;
