@@ -17,15 +17,15 @@ def model(x, u):
     return xplus;
 
 def pcost(x, u):
-    Nx = len(x);
+    dNx = len(x);
     Nu = len(u);
-    J = sum( [x[i]**2 for i in range(Nx)] );
+    J = sum( [x[i]**2 for i in range(dNx)] );
     J += sum( [(u[i]-1)**2 for i in range(Nu)] );
     return J;
 
 def tcost(x):
-    Nx = len(x);
-    J = sum( [x[i]**2 for i in range(Nx)] );
+    dNx = len(x);
+    J = sum( [x[i]**2 for i in range(dNx)] );
     return J;
 
 # main execution block
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     kl = 1;
     model_type = 'discrete';
     vhc = Vehicle(x0, xd);
-    dpvar = dpa.DynamicProgramming(pcost, tcost, model, PH, Nx, Nu,
+    dpvar = dpa.DynamicProgramming(pcost, tcost, model, PH, dNx, Nu,
         params=vhc, max_iter=100);
     dpvar.setAlpha(0.1);
 

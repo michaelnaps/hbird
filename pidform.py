@@ -59,7 +59,7 @@ def linearized(x, u, xd):
 
     xplus = A@np.array(x)[:,None] + B@np.array(u)[:,None];
 
-    return xplus.reshape(Nx,);
+    return xplus.reshape(cNx,);
 
 def control(x):
     d = [0, 0, 0];
@@ -81,7 +81,7 @@ def noise(eps, shape=(1,1)):
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = np.zeros( (Nx,1) );
+    xd = np.zeros( (cNx,1) );
 
     eps = 0.1;
     disturbance = noise(eps, xd.shape);
@@ -94,14 +94,14 @@ if __name__ == "__main__":
 
     # main simulation loop
     x = x0;
-    xlist = np.empty( (Nx,Nt) );
+    xlist = np.empty( (cNx,Nt) );
     for i in range(Nt):
         x = model(x, control(x));
         xlist[:,i] = x[:,0];
         print(x);
 
     # plot results
-    fig, axsList = plt.subplots(Nx,1);
+    fig, axsList = plt.subplots(cNx,1);
 
     for i, axs in enumerate(axsList):
         axs.plot(tlist[0], xlist[i,:]);

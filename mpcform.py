@@ -49,7 +49,7 @@ def linearized(x, u, _):
 
     xplus = A@np.array(x)[:,None] + B@np.array(u)[:,None];
 
-    return xplus.reshape(Nx,);
+    return xplus.reshape(dNx,);
 
 def control(x):
     return [m*g,0,0];
@@ -61,7 +61,7 @@ def cost(mvar, xlist, ulist):
 
     C = 0;  j = 0;
     for i, x in enumerate(xlist):
-        C += (a**i)*sum([k[i]*(x[i] - xd[i])**2 for i in range(Nx)]);
+        C += (a**i)*sum([k[i]*(x[i] - xd[i])**2 for i in range(dNx)]);
         # if i < mvar.PH:
         #     C += ku/(10 - abs(ulist[j]));
         #     j += Nu;
@@ -79,9 +79,9 @@ if __name__ == "__main__":
     PH = 15;
     kl = 1;
     model_type = 'discrete';
-    params = Vehicle(np.zeros((Nx,)), xd);
+    params = Vehicle(np.zeros((dNx,)), xd);
     mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
-        num_ssvar=Nx, PH_length=PH, knot_length=kl, time_step=dt,
+        num_ssvar=dNx, PH_length=PH, knot_length=kl, time_step=dt,
         max_iter=1000, model_type=model_type);
     mvar.setAlpha(1);
 

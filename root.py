@@ -3,6 +3,8 @@ sys.path.insert(0, '/home/michaelnaps/prog/mpc');
 
 
 import dpa
+import mpc
+
 import numpy as np
 from numpy import pi
 from numpy import random as rd
@@ -19,7 +21,8 @@ m = 1;
 g = 9.81;
 a = 1.00;  # discount rate
 eps = 0.1;
-Nx = 15;
+dNx = 5;
+cNx = 15;
 Nu = 3;
 dt = 0.01;
 
