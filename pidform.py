@@ -191,8 +191,8 @@ def linearized(x, u, _):
 def control(x):
     k = [0.01, 0.001, 0.0001];
 
-    v1 = -k[0]*x[0] - k[1]*x[5] - k[2]*x[10];
-    v2 = -k[0]*x[1] - k[1]*x[6] - k[2]*x[11];
+    v1 = 0; #-k[0]*x[0] - k[1]*x[5] - k[2]*x[10];
+    v2 = 0; #-k[0]*x[1] - k[1]*x[6] - k[2]*x[11];
     v3 = m*g - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
     v = np.vstack( (v1, v2, v3) );
 
@@ -212,12 +212,12 @@ def noise(eps, shape=(1,1)):
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-
     xd = np.zeros( (Nx,1) );
 
     eps = 1;
     disturbance = np.array( [int(i==2)*noise(eps, (1,)) for i in range(Nx)] );
     x0 = xd + disturbance;
+    print(x0);
 
     # simulation
     dt = 0.001
