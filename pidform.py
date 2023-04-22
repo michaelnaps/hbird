@@ -1,7 +1,7 @@
 from root import *
 
 # linear controller gains
-k = [0.95, 0.05, 0];
+k = [0.99, 0.05, 0.01];
 
 # model and cost functions
 def model(x, u):
@@ -52,12 +52,13 @@ def linearize(x):
     x13 = x[7];  x14 = x[8];
     x15 = x[9];
 
-    u1 = -k[0]*x3 - k[1]*x8 - k[2]*x13;
-    u2 = -k[0]*x4 - k[1]*x9 - k[2]*x14;
-    u3 = -k[0]*x5 - k[1]*x10 - k[2]*x15;
+    uList = control(x)[:,0];
+    u1 = uList[0];
+    u2 = uList[1];
+    u3 = uList[2];
 
     Ax0 = np.hstack( (
-        np.zeros( (cNx,cNx) ), np.eye(cNx), np.zeros( (cNx,cNx) ) ) );
+        np.zeros( (dNx,dNx) ), np.eye(dNx), np.zeros( (dNx,dNx) ) ) );
     Ax1 = np.array( [
         [0, 0, -k[0], -np.sin(x4)*np.cos(x5)*u1, -np.cos(x4)*np.sin(x5)*u1, 0, 0, -k[1],     0,     0, 0, 0, -k[1],     0,     0],
         [0, 0, -k[0], -np.sin(x4)*np.cos(x5)*u1, -np.cos(x4)*np.sin(x5)*u1, 0, 0, -k[1],     0,     0, 0, 0, -k[1],     0,     0],
@@ -65,14 +66,14 @@ def linearize(x):
         [0, 0,     0,                     -k[0],                         0, 0, 0,     0, -k[1],     0, 0, 0,     0, -k[1],     0],
         [0, 0,     0,                         0,                     -k[0], 0, 0,     0,     0, -k[1], 0, 0,     0,     0, -k[1]] ] );
     Ay  = np.hstack( (
-        np.eye(cNx), np.zeros( (cNx,2*cNx) )) );
+        np.eye(dNx), np.zeros( (dNx,2*dNx) )) );
 
     Ax = np.vstack( (Ax0, Ax1, Ay) );
 
     return Ax;
 
 def control(x):
-    d = [0, 0, 0];
+    d = [m*g, 0, 0];
 
     u1 = d[0] - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
     u2 = d[1] - k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
@@ -92,7 +93,8 @@ if __name__ == "__main__":
     # initialize starting and goal states
     xd = np.zeros( (cNx,1) );
     A0 = linearize( xd );
-    print(A0);
+    eigA0 = np.linalg.eig(A0)[0];
+    print( eigA0.reshape(len(eigA0),1) );
 
     eps = 0.1;
     disturbance = noise(eps, xd.shape);
@@ -100,21 +102,25 @@ if __name__ == "__main__":
     # print(x0);
 
     # simulation
-    T = 2.5;  Nt = round(T/dt) + 1;
+    T = 10;  Nt = round(T/dt) + 1;
     tlist = [[i*dt for i in range(Nt)]];
 
     # main simulation loop
     x = x0;
     xlist = np.empty( (cNx,Nt) );
     for i in range(Nt):
-        x = model(x, control(x));
+        x = x + dt*model(x, control(x));
         xlist[:,i] = x[:,0];
-        print(x);
 
     # plot results
     fig, axsList = plt.subplots(cNx,1);
 
+    labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
     for i, axs in enumerate(axsList):
         axs.plot(tlist[0], xlist[i,:]);
+        axs.set_ylabel(labels[i])
+        if max( abs(xlist[i,:]) ) < 1:
+            axs.set_ylim( (-1,1) );
+    axsList[-1].set_xlabel('Time [s]');
 
-    plt.show();
+    # plt.show();
