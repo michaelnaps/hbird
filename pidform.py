@@ -1,5 +1,8 @@
 from root import *
 
+# linear controller gains
+k = [0.95, 0.05, 0];
+
 # model and cost functions
 def model(x, u):
     F     = u[0];
@@ -34,36 +37,42 @@ def model(x, u):
 
     return dx;
 
-def linearized(x, u, xd):
-    F     = u[0];
-    TauZ  = u[1];
-    TauXY = u[2];
+def linearize(x):
+    x = x.reshape(cNx,)
 
-    x1 = xd[0];  x2 = xd[1];
-    x3 = xd[2];  x4 = xd[3];
-    x5 = xd[4];
+    x1 = x[0];  x2 = x[1];
+    x3 = x[2];  x4 = x[3];
+    x5 = x[4];
 
-    n = 5;
-    Ax0 = np.hstack( (np.zeros( (n,n) ), np.eye(n), np.zeros( (n,n) )) );
-    Ay  = np.hstack( (np.eye(n), np.zeros( (n,2*n) )) );
+    x6 = x[5];  x7 = x[6];
+    x8 = x[7];  x9 = x[8];
+    x10 = x[9];
+
+    x11 = x[5];  x12 = x[6];
+    x13 = x[7];  x14 = x[8];
+    x15 = x[9];
+
+    u1 = -k[0]*x3 - k[1]*x8 - k[2]*x13;
+    u2 = -k[0]*x4 - k[1]*x9 - k[2]*x14;
+    u3 = -k[0]*x5 - k[1]*x10 - k[2]*x15;
+
+    Ax0 = np.hstack( (
+        np.zeros( (cNx,cNx) ), np.eye(cNx), np.zeros( (cNx,cNx) ) ) );
     Ax1 = np.array( [
-        [0, 0, 1],
-        [0, 0, 1],
-        [0, 0, 1],
-        [0, 0, 1],
-        [0, 0, 1]
-    ] );
+        [0, 0, -k[0], -np.sin(x4)*np.cos(x5)*u1, -np.cos(x4)*np.sin(x5)*u1, 0, 0, -k[1],     0,     0, 0, 0, -k[1],     0,     0],
+        [0, 0, -k[0], -np.sin(x4)*np.cos(x5)*u1, -np.cos(x4)*np.sin(x5)*u1, 0, 0, -k[1],     0,     0, 0, 0, -k[1],     0,     0],
+        [0, 0, -k[0],             np.cos(x4)*u1,                         0, 0, 0, -k[1],     0,     0, 0, 0, -k[1],     0,     0],
+        [0, 0,     0,                     -k[0],                         0, 0, 0,     0, -k[1],     0, 0, 0,     0, -k[1],     0],
+        [0, 0,     0,                         0,                     -k[0], 0, 0,     0,     0, -k[1], 0, 0,     0,     0, -k[1]] ] );
+    Ay  = np.hstack( (
+        np.eye(cNx), np.zeros( (cNx,2*cNx) )) );
 
-    print(A);
-    print(B);
+    Ax = np.vstack( (Ax0, Ax1, Ay) );
 
-    xplus = A@np.array(x)[:,None] + B@np.array(u)[:,None];
-
-    return xplus.reshape(cNx,);
+    return Ax;
 
 def control(x):
     d = [0, 0, 0];
-    k = [0.95, 0.05, 0];
 
     u1 = d[0] - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
     u2 = d[1] - k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
@@ -82,6 +91,8 @@ def noise(eps, shape=(1,1)):
 if __name__ == "__main__":
     # initialize starting and goal states
     xd = np.zeros( (cNx,1) );
+    A0 = linearize( xd );
+    print(A0);
 
     eps = 0.1;
     disturbance = noise(eps, xd.shape);

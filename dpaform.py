@@ -1,5 +1,6 @@
 from root import *
 
+
 # model and cost functions
 def model(x, u):
     F     = u[0];
@@ -26,6 +27,7 @@ def pcost(x, u):
 def tcost(xN):
     gN = sum( [xN[i]**2 for i in range(dNx)] );
     return gN;
+
 
 # main execution block
 if __name__ == "__main__":
