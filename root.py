@@ -242,11 +242,23 @@ def dmodel(x, u):
     TauXY = u[2];
 
     xplus = [
-        x[0] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
-        x[1] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
-        x[2] + dt/m*(F*math.cos(x[3]) - m*g),
-        x[3] + dt*TauZ,
-        x[4] + dt*TauXY
+        x[0] + dt*x[5],
+        x[1] + dt*x[6],
+        x[2] + dt*x[7],
+        x[3] + dt*x[8],
+        x[4] + dt*x[9],
+
+        x[5] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
+        x[6] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
+        x[7] + dt/m*(F*math.cos(x[3]) - m*g),
+        x[8] + dt*TauZ,
+        x[9] + dt*TauXY,
+
+        x[10] + dt*x[0],
+        x[11] + dt*x[1],
+        x[12] + dt*x[2],
+        x[13] + dt*x[3],
+        x[14] + dt*x[4]
     ];
 
     return xplus;

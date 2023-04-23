@@ -69,6 +69,9 @@ def noise(eps, shape=(1,1)):
 
 # pid simulation function (for MPC comparison)
 def pidSimulation(tList, x0):
+    # simulation time
+    Nt = len(tList[0]);
+
     # main simulation loop
     x = x0;
     xList = np.empty( (cNx,Nt) );
