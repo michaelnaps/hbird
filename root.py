@@ -24,7 +24,8 @@ Nu = 3;
 dt = 0.01;
 
 # label and state grouping meta-data
-labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
+xd = np.zeros( (cNx,1) );
+clabels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
 states = np.array( [
     [0, 5, 10],
     [1, 6, 11],
@@ -126,7 +127,6 @@ class Vehicle:
 
         return self;
 
-
 # class for dynamic programming
 class DynamicProgramming:
     def __init__(self, pcost, tcost, model, N, Nx, Nu,
@@ -202,6 +202,54 @@ class DynamicProgramming:
 
         return dJ;
 
+# model functions
+def cmodel(x, u):
+    F     = u[0];
+    TauZ  = u[1];
+    TauXY = u[2];
+
+    dx0 = np.array( [
+        x[5],
+        x[6],
+        x[7],
+        x[8],
+        x[9]
+    ] ).reshape(5,1);
+
+    dx1 = np.array( [
+        F*np.sin(x[3])*np.cos(x[4]),
+        F*np.sin(x[3])*np.sin(x[4]),
+        (F*np.cos(x[3]) - m*g),
+        m*TauZ,
+        m*TauXY
+    ] ).reshape(5,1);
+
+    dx2 = np.array( [
+        x[0],
+        x[1],
+        x[2],
+        x[3],
+        x[4]
+    ] ).reshape(5,1);
+
+    dx = np.vstack( (dx0, dx1, dx2) );
+
+    return dx;
+
+def dmodel(x, u):
+    F     = u[0];
+    TauZ  = u[1];
+    TauXY = u[2];
+
+    xplus = [
+        x[0] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
+        x[1] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
+        x[2] + dt/m*(F*math.cos(x[3]) - m*g),
+        x[3] + dt*TauZ,
+        x[4] + dt*TauXY
+    ];
+
+    return xplus;
 
 # assorted plotting functions
 def plotTrajectories(labels, states, tList, xList, fig=None, axsList=None):

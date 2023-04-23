@@ -1,7 +1,7 @@
 from root import *
 
 # model and cost functions
-def model(x, u, _):
+def dmodel(x, u, _):
     F     = u[0];
     TauZ  = u[1];
     TauXY = u[2];
@@ -15,44 +15,6 @@ def model(x, u, _):
     ];
 
     return xplus;
-
-def linearized(x, u, _):
-    F     = u[0];
-    TauZ  = u[1];
-    TauXY = u[2];
-
-    w = dt/m;
-
-    xd = _.params;
-    x1 = xd[0];  x2 = xd[1];
-    x3 = xd[2];  x4 = xd[3];
-    x5 = xd[4];
-
-    A = np.array( [
-        [1, 0, 0, -w*F*np.sin(x4)*np.cos(x5), -w*F*np.cos(x4)*np.sin(x5)],
-        [0, 1, 0, -w*F*np.sin(x4)*np.sin(x5),  w*F*np.cos(x4)*np.sin(x5)],
-        [0, 0, 1,  w*np.cos(x4),               0                        ],
-        [0, 0, 0,  1,                          0                        ],
-        [0, 0, 0,  0,                          1                        ]
-    ] );
-
-    B = np.array( [
-        [w*np.cos(x4)*np.cos(x5), 0,  0 ],
-        [w*np.cos(x4)*np.sin(x5), 0,  0 ],
-        [w*np.sin(x4)           , 0,  0 ],
-        [0,                       dt, 0 ],
-        [0,                       0,  dt]
-    ] );
-
-    print(A);
-    print(B);
-
-    xplus = A@np.array(x)[:,None] + B@np.array(u)[:,None];
-
-    return xplus.reshape(dNx,);
-
-def control(x):
-    return [m*g,0,0];
 
 def cost(mvar, xlist, ulist):
     xd = mvar.params.xd;
@@ -72,15 +34,15 @@ def cost(mvar, xlist, ulist):
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = [0,0,0,0,0];
-    x0 = [0,0,1,0,0];
+    xd = [0 for i in range(dNx)];
+    x0 = [1*(i==2) for i in range(dNx)];
 
     # create MPC class variable
-    PH = 15;
+    PH = 10;
     kl = 1;
     model_type = 'discrete';
     params = Vehicle(np.zeros((dNx,)), xd);
-    mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
+    mvar = mpc.ModelPredictiveControl('ngd', dmodel, cost, params, Nu,
         num_ssvar=dNx, PH_length=PH, knot_length=kl, time_step=dt,
         max_iter=100, model_type=model_type);
     mvar.setAlpha(1);

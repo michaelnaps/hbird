@@ -15,39 +15,6 @@ states = np.array( [
     [4, 9, 14]] );
 
 # model and cost functions
-def model(x, u):
-    F     = u[0];
-    TauZ  = u[1];
-    TauXY = u[2];
-
-    dx0 = np.array( [
-        x[5],
-        x[6],
-        x[7],
-        x[8],
-        x[9]
-    ] ).reshape(5,1);
-
-    dx1 = np.array( [
-        F*np.sin(x[3])*np.cos(x[4]),
-        F*np.sin(x[3])*np.sin(x[4]),
-        (F*np.cos(x[3]) - m*g),
-        m*TauZ,
-        m*TauXY
-    ] ).reshape(5,1);
-
-    dx2 = np.array( [
-        x[0],
-        x[1],
-        x[2],
-        x[3],
-        x[4]
-    ] ).reshape(5,1);
-
-    dx = np.vstack( (dx0, dx1, dx2) );
-
-    return dx;
-
 def linearize(x):
     x = x.reshape(cNx,)
 
@@ -99,28 +66,14 @@ def noise(eps, shape=(1,1)):
         return 2*eps*np.random.rand(shape[0]) - eps;
     return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
-# main execution block
-if __name__ == "__main__":
-    # initialize starting and goal states
-    xd = np.zeros( (cNx,1) );
-    # A0 = linearize( xd );
-    # eigA0 = np.linalg.eig(A0)[0];
-    # print( eigA0.reshape(len(eigA0),1) );
 
-    eps = 1;
-    disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
-    # disturbance = noise(eps, xd.shape);
-    x0 = xd + disturbance;
-
-    # simulation
-    T = 20;  Nt = round(T/dt) + 1;
-    tList = [[i*dt for i in range(Nt)]];
-
+# pid simulation function (for MPC comparison)
+def pidSimulation(tList, x0):
     # main simulation loop
     x = x0;
     xList = np.empty( (cNx,Nt) );
     for i in range(Nt):
-        x = x + dt*model(x, control(x));
+        x = x + dt*cmodel(x, control(x));
         xList[:,i] = x[:,0];
 
     # plot results
@@ -128,4 +81,21 @@ if __name__ == "__main__":
     axsList[0,0].set_title('Position');
     axsList[0,1].set_title('Velocity');
     axsList[0,2].set_title('Error');
+
+    return fig, axsList, xList;
+
+
+# main execution block
+if __name__ == "__main__":
+    # initial position w/ disturbance
+    eps = 1;
+    disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
+    x0 = xd + disturbance;
+
+    # simulation length
+    T = 20;  Nt = round(T/dt) + 1;
+    tList = [[i*dt for i in range(Nt)]];
+
+    # execute simulation
+    fig, axsList, xList = pidSimulation(tList, x0);
     plt.show();
