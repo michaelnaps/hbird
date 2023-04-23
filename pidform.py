@@ -1,7 +1,18 @@
 from root import *
 
 # linear controller gains
-k = [0.99, 0.05, 0.01];
+k = np.array( [
+    [0.99, 0.75, 0.001],
+    [0.99, 0.75, 0.001],
+    [0.99, 0.75, 0.001] ] );
+
+labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
+states = np.array( [
+    [0, 5, 10],
+    [1, 6, 11],
+    [2, 7, 12],
+    [3, 8, 13],
+    [4, 9, 14]] );
 
 # model and cost functions
 def model(x, u):
@@ -75,9 +86,9 @@ def linearize(x):
 def control(x):
     d = [m*g, 0, 0];
 
-    u1 = d[0] - k[0]*x[2] - k[1]*x[7] - k[2]*x[12];
-    u2 = d[1] - k[0]*x[3] - k[1]*x[8] - k[2]*x[13];
-    u3 = d[2] - k[0]*x[4] - k[1]*x[9] - k[2]*x[14];
+    u1 = d[0] - k[0,0]*x[2] - k[0,1]*x[7] - k[0,2]*x[12];
+    u2 = d[1] - k[1,0]*x[3] - k[1,1]*x[8] - k[1,2]*x[13];
+    u3 = d[2] - k[2,0]*x[4] - k[2,1]*x[9] - k[2,2]*x[14];
 
     u = np.vstack( (u1, u2, u3) );
 
@@ -92,35 +103,41 @@ def noise(eps, shape=(1,1)):
 if __name__ == "__main__":
     # initialize starting and goal states
     xd = np.zeros( (cNx,1) );
-    A0 = linearize( xd );
-    eigA0 = np.linalg.eig(A0)[0];
-    print( eigA0.reshape(len(eigA0),1) );
+    # A0 = linearize( xd );
+    # eigA0 = np.linalg.eig(A0)[0];
+    # print( eigA0.reshape(len(eigA0),1) );
 
-    eps = 0.1;
-    disturbance = noise(eps, xd.shape);
+    eps = 1;
+    disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
+    # disturbance = noise(eps, xd.shape);
     x0 = xd + disturbance;
-    # print(x0);
+    print(x0);
 
     # simulation
-    T = 10;  Nt = round(T/dt) + 1;
-    tlist = [[i*dt for i in range(Nt)]];
+    T = 20;  Nt = round(T/dt) + 1;
+    tList = [[i*dt for i in range(Nt)]];
 
     # main simulation loop
     x = x0;
-    xlist = np.empty( (cNx,Nt) );
+    xList = np.empty( (cNx,Nt) );
     for i in range(Nt):
         x = x + dt*model(x, control(x));
-        xlist[:,i] = x[:,0];
+        print(control(x).T);
+        xList[:,i] = x[:,0];
 
     # plot results
-    fig, axsList = plt.subplots(cNx,1);
+    fig, axsList = plt.subplots(len(states), len(states[0]));
 
-    labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
-    for i, axs in enumerate(axsList):
-        axs.plot(tlist[0], xlist[i,:]);
-        axs.set_ylabel(labels[i])
-        if max( abs(xlist[i,:]) ) < 1:
-            axs.set_ylim( (-1,1) );
-    axsList[-1].set_xlabel('Time [s]');
+    for j, axs in enumerate(axsList):
+        for k, i in enumerate(states[j]):
+            axs[k].plot(tList[0], xList[i,:], label=labels[i]);
+            axs[k].legend(loc='upper right');
+            if max( abs(xList[i,:]) ) < 1:
+                axs[k].set_ylim(-1,1);
 
-    # plt.show();
+
+
+
+    axsList[-1][-1].set_xlabel('Time [s]');
+
+    plt.show();
