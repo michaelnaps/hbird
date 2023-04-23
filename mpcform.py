@@ -4,7 +4,7 @@ import pidform as pid
 # cost function
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
-    k = [25,25,100,15,15,1,1,1,1,1];
+    k = [25,25,100,30,30,5,5,5,1,1];
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # solve single step
     sim_time = 10;
     uinit = [0 for i in range(Nu*PH)];
-    x0mpc = [x0[i][0] for i in range(cNx)];  print(x0mpc);
+    x0mpc = [x0[i][0] for i in range(cNx)];
     mpc_results = mvar.sim_root(sim_time, x0mpc, uinit);
     print('MPC Complete.');
 
