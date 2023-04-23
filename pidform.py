@@ -111,7 +111,6 @@ if __name__ == "__main__":
     disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
     # disturbance = noise(eps, xd.shape);
     x0 = xd + disturbance;
-    print(x0);
 
     # simulation
     T = 20;  Nt = round(T/dt) + 1;
@@ -122,9 +121,11 @@ if __name__ == "__main__":
     xList = np.empty( (cNx,Nt) );
     for i in range(Nt):
         x = x + dt*model(x, control(x));
-        print(control(x).T);
         xList[:,i] = x[:,0];
 
     # plot results
     fig, axsList = plotTrajectories(labels, states, tList, xList);
+    axsList[0,0].set_title('Position');
+    axsList[0,1].set_title('Velocity');
+    axsList[0,2].set_title('Error');
     plt.show();
