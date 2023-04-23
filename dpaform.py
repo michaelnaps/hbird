@@ -36,7 +36,7 @@ if __name__ == "__main__":
     x0 = [0,0,0.1,0,0];
 
     # create MPC class variable
-    N = 3;
+    N = 2;
     model_type = 'discrete';
     vhc = Vehicle(x0, xd);
     dpvar = DynamicProgramming(pcost, tcost, model, N, dNx, Nu,
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # test DPA
     uinit = [0 for i in range(Nu)]
     cost = lambda u: pcost(x0,u) + tcost( model(x0,u) );
-    ustar, Jstar = dpvar.forward(x0, uinit);
+    ustar, Jstar = dpvar.minimize(cost, uinit);
 
     print(ustar, Jstar);
     print(model(x0, ustar));

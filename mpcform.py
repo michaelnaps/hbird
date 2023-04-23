@@ -61,7 +61,7 @@ def cost(mvar, xlist, ulist):
 
     C = 0;  j = 0;
     for i, x in enumerate(xlist):
-        C += (a**i)*sum([k[i]*(x[i] - xd[i])**2 for i in range(dNx)]);
+        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(dNx)]);
         # if i < mvar.PH:
         #     C += ku/(10 - abs(ulist[j]));
         #     j += Nu;
@@ -72,8 +72,8 @@ def cost(mvar, xlist, ulist):
 # main execution block
 if __name__ == "__main__":
     # initialize starting and goal states
-    xd = [0,0,1,0,0];
-    x0 = [0,0,0,0,0];
+    xd = [0,0,0,0,0];
+    x0 = [0,0,1,0,0];
 
     # create MPC class variable
     PH = 15;
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     params = Vehicle(np.zeros((dNx,)), xd);
     mvar = mpc.ModelPredictiveControl('ngd', model, cost, params, Nu,
         num_ssvar=dNx, PH_length=PH, knot_length=kl, time_step=dt,
-        max_iter=1000, model_type=model_type);
+        max_iter=100, model_type=model_type);
     mvar.setAlpha(1);
 
     # solve single step

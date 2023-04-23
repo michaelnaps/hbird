@@ -23,6 +23,15 @@ cNx = 15;
 Nu = 3;
 dt = 0.01;
 
+# label and state grouping meta-data
+labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
+states = np.array( [
+    [0, 5, 10],
+    [1, 6, 11],
+    [2, 7, 12],
+    [3, 8, 13],
+    [4, 9, 14]] );
+
 
 # simulation vehicle entity
 class Vehicle:
@@ -192,3 +201,18 @@ class DynamicProgramming:
             dJ[i] = (Jp1 - Jn1)/(2*h);
 
         return dJ;
+
+
+# assorted plotting functions
+def plotTrajectories(labels, states, tList, xList, fig=None, axsList=None):
+    if fig is None:
+        fig, axsList = plt.subplots(len(states), len(states[0]));
+
+    for j, axs in enumerate(axsList):
+        for k, i in enumerate(states[j]):
+            axs[k].plot(tList[0], xList[i,:], label=labels[i]);
+            axs[k].legend(loc='upper right');
+            if max( abs(xList[i,:]) ) < 1:
+                axs[k].set_ylim(-1,1);
+
+    return fig, axsList;

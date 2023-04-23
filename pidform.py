@@ -126,18 +126,5 @@ if __name__ == "__main__":
         xList[:,i] = x[:,0];
 
     # plot results
-    fig, axsList = plt.subplots(len(states), len(states[0]));
-
-    for j, axs in enumerate(axsList):
-        for k, i in enumerate(states[j]):
-            axs[k].plot(tList[0], xList[i,:], label=labels[i]);
-            axs[k].legend(loc='upper right');
-            if max( abs(xList[i,:]) ) < 1:
-                axs[k].set_ylim(-1,1);
-
-
-
-
-    axsList[-1][-1].set_xlabel('Time [s]');
-
+    fig, axsList = plotTrajectories(labels, states, tList, xList);
     plt.show();
