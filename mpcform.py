@@ -1,36 +1,21 @@
 from root import *
 import pidform as pid
 
-# model and cost functions
-def dmodel(x, u, _):
-    F     = u[0];
-    TauZ  = u[1];
-    TauXY = u[2];
-
-    xplus = [
-        x[0] + dt/m*F*math.sin(x[3])*math.cos(x[4]),
-        x[1] + dt/m*F*math.sin(x[3])*math.sin(x[4]),
-        x[2] + dt/m*(F*math.cos(x[3]) - m*g),
-        x[3] + dt*TauZ,
-        x[4] + dt*TauXY
-    ];
-
-    return xplus;
-
+# cost function
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
-    k = [10,10,100,1,1];
+    k = [25,25,100,15,15,1,1,1,1,1];
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
-        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(dNx)]);
+        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(2*dNx)]);
 
     return C;
 
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 1;
+    eps = 0.1;
     disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
     x0 = xd + disturbance;
 
@@ -39,19 +24,34 @@ if __name__ == "__main__":
     tList = [[i*dt for i in range(Nt)]];
 
     # create MPC class variable
+    xdmpc = [xd[i][0] for i in range(cNx)];
+    modelmpc = lambda x, u, _: dmodel(x,u);
     PH = 10;
-    kl = 1;
+    kl = 5;
+    max_iter = 250;
     model_type = 'discrete';
-    params = Vehicle(np.zeros((cNx,)), xd);
-    mvar = mpc.ModelPredictiveControl('ngd', dmodel, cost, params, Nu,
+    params = Vehicle(np.zeros((cNx,)), xdmpc);
+    mvar = mpc.ModelPredictiveControl('ngd', modelmpc, cost, params, Nu,
         num_ssvar=cNx, PH_length=PH, knot_length=kl, time_step=dt,
-        max_iter=100, model_type=model_type);
+        appx_zero=1e-3, max_iter=max_iter, model_type=model_type);
     mvar.setAlpha(1);
 
     # get pid results
-    fig, axsList, pid_results = pid.pidSimulation(tList, x0)
+    pid_results = pid.pidSimulation(tList, x0)
+    print('PID Complete.');
 
     # solve single step
-    sim_time = 20;
+    sim_time = 10;
     uinit = [0 for i in range(Nu*PH)];
-    mpc_results = mvar.sim_root(sim_time, x0.T[0], uinit, output=0);
+    x0mpc = [x0[i][0] for i in range(cNx)];  print(x0mpc);
+    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit);
+    print('MPC Complete.');
+
+    # comparison plots
+    fig, axsList = plotTrajectories(labels, states, tList, pid_results);
+
+    tmpc = [mpc_results[0]];
+    xmpc = np.array( mpc_results[1] ).T;
+    fig, axsList = plotTrajectories(labels, states, tmpc, xmpc, fig, axsList);
+
+    plt.show();

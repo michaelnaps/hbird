@@ -6,14 +6,6 @@ k = np.array( [
     [0.99, 0.75, 0.001],
     [0.99, 0.75, 0.001] ] );
 
-labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
-states = np.array( [
-    [0, 5, 10],
-    [1, 6, 11],
-    [2, 7, 12],
-    [3, 8, 13],
-    [4, 9, 14]] );
-
 # model and cost functions
 def linearize(x):
     x = x.reshape(cNx,)
@@ -66,7 +58,6 @@ def noise(eps, shape=(1,1)):
         return 2*eps*np.random.rand(shape[0]) - eps;
     return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
-
 # pid simulation function (for MPC comparison)
 def pidSimulation(tList, x0):
     # simulation time
@@ -79,14 +70,7 @@ def pidSimulation(tList, x0):
         x = x + dt*cmodel(x, control(x));
         xList[:,i] = x[:,0];
 
-    # plot results
-    fig, axsList = plotTrajectories(labels, states, tList, xList);
-    axsList[0,0].set_title('Position');
-    axsList[0,1].set_title('Velocity');
-    axsList[0,2].set_title('Error');
-
-    return fig, axsList, xList;
-
+    return xList;
 
 # main execution block
 if __name__ == "__main__":
@@ -100,5 +84,6 @@ if __name__ == "__main__":
     tList = [[i*dt for i in range(Nt)]];
 
     # execute simulation
-    fig, axsList, xList = pidSimulation(tList, x0);
+    xList = pidSimulation(tList, x0);
+    fig, axsList = plotTrajectories(labels, states, tList, xList);
     plt.show();

@@ -25,7 +25,7 @@ dt = 0.01;
 
 # label and state grouping meta-data
 xd = np.zeros( (cNx,1) );
-clabels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
+labels = ['$x_{'+str(i+1)+'}$' for i in range(cNx)];
 states = np.array( [
     [0, 5, 10],
     [1, 6, 11],
@@ -80,8 +80,8 @@ class Vehicle:
         plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
-        # plt.show(block=0);
-        # plt.close('all');
+        plt.show(block=0);
+        plt.close('all');
 
         # plot pause
         self.pause = pause;
