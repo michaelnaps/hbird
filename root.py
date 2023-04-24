@@ -15,9 +15,10 @@ import matplotlib.path as path
 
 
 # hyper parameters
-m = 1;
-g = 9.81;
-eps = 0.1;
+m = 1.00;       # hummingbird mass [g]
+g = 9.81;       # gravitational energy
+c = 0.20;       # coefficient of air friction
+eps = 0.1;      # disturbance range -> [-eps, eps]
 dNx = 5;
 cNx = 15;
 Nu = 3;
@@ -217,11 +218,11 @@ def cmodel(x, u):
     ] ).reshape(5,1);
 
     dx1 = np.array( [
-        F*np.sin(x[3])*np.cos(x[4]),
-        F*np.sin(x[3])*np.sin(x[4]),
-        (F*np.cos(x[3]) - m*g),
-        m*TauZ,
-        m*TauXY
+        1/m*(F*np.sin(x[3])*np.cos(x[4]) - c*x[5]),
+        1/m*(F*np.sin(x[3])*np.sin(x[4]) - c*x[6]),
+        1/m*(F*np.cos(x[3]) - m*g - c*x[7]),
+        TauZ,
+        TauXY
     ] ).reshape(5,1);
 
     dx2 = np.array( [
