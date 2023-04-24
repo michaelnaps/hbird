@@ -67,6 +67,8 @@ def pidSimulation(tList, x0):
     x = x0;
     xList = np.empty( (cNx,Nt) );
     for i in range(Nt):
+        print(x[5], control(x)[0], cmodel(x, control(x))[5]);
+        print(x[5] + dt*cmodel(x, control(x))[5]);
         x = x + dt*cmodel(x, control(x));
         xList[:,i] = x[:,0];
 
