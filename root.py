@@ -17,7 +17,7 @@ import matplotlib.path as path
 # hyper parameters
 m = 3.00;       # hummingbird mass [g]
 g = 9.81;       # gravitational energy
-c = 1.00;       # coefficient of air friction
+c = 2.00;       # coefficient of air friction
 eps = 0.1;      # disturbance range -> [-eps, eps]
 dNx = 5;
 cNx = 15;

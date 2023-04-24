@@ -2,15 +2,9 @@ from root import *
 
 # linear controller gains
 k = np.array( [
-    [0.99, 0.80, 0.001],
-    [0.99, 0.80, 0.001],
-    [0.99, 0.80, 0.001] ] );
-
-for i in range( len(k) ):
-    for j in range( len(k[0]) ):
-        k[i,j] = 10*k[i,j];
-
-print( k );
+    [10.0, 8.00, 0.010],
+    [10.0, 8.00, 0.010],
+    [10.0, 8.00, 0.010] ] );
 
 # model and cost functions
 def linearize(x):
@@ -89,7 +83,7 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # simulation length
-    T = 50;  Nt = round(T/dt) + 1;
+    T = 15;  Nt = round(T/dt) + 1;
     tList = [[i*dt for i in range(Nt)]];
 
     # execute simulation
