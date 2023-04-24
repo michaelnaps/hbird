@@ -53,7 +53,9 @@ def control(x):
 
     return u;
 
-def noise(eps, shape=(1,1)):
+def noise(eps, shape=None):
+    if shape is None:
+        return 2*eps*np.random.rand() - eps;
     if len(shape) == 1:
         return 2*eps*np.random.rand(shape[0]) - eps;
     return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
@@ -77,14 +79,14 @@ if __name__ == "__main__":
     # initial position w/ disturbance
     eps = 1;
     disturbList = (0,1,2,3,4);
-    disturbance = [[(i in disturbList)*eps] for i in range(cNx)];
+    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
-    T = 25;  Nt = round(T/dt) + 1;
+    T = 50;  Nt = round(T/dt) + 1;
     tList = [[i*dt for i in range(Nt)]];
 
     # execute simulation
     xList = pidSimulation(tList, x0);
-    fig, axsList = plotTrajectories(tList, xList, leg='PID');
+    fig, axsList = plotTrajectories(tList, xList, legend='PID');
     plt.show();

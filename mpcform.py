@@ -4,7 +4,7 @@ import pidform as pid
 # cost function
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
-    k = [25,25,100,30,30,5,5,5,1,1];
+    k = [30,30,100,20,20,5,5,5,1,1];
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
     modelmpc = lambda x, u, _: dmodel(x,u);
-    PH = 10;
+    PH = 5;
     kl = 5;
     max_iter = 250;
     model_type = 'discrete';
@@ -36,22 +36,21 @@ if __name__ == "__main__":
         appx_zero=1e-3, max_iter=max_iter, model_type=model_type);
     mvar.setAlpha(1);
 
-    # get pid results
-    pid_results = pid.pidSimulation(tList, x0)
-    print('PID Complete.');
+    # # get pid results
+    # pid_results = pid.pidSimulation(tList, x0)
+    # print('PID Complete.');
 
     # solve single step
     sim_time = 10;
     uinit = [0 for i in range(Nu*PH)];
     x0mpc = [x0[i][0] for i in range(cNx)];
-    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit);
+    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=0);
     print('MPC Complete.');
 
-    # comparison plots
-    fig, axsList = plotTrajectories(labels, states, tList, pid_results);
+    # # comparison plots
+    # fig, axsList = plotTrajectories(tList, pid_results);
 
-    tmpc = [mpc_results[0]];
-    xmpc = np.array( mpc_results[1] ).T;
-    fig, axsList = plotTrajectories(labels, states, tmpc, xmpc, fig, axsList);
+    tmpc = [mpc_results[0]];  xmpc = np.array( mpc_results[1] ).T;
+    fig, axsList = plotTrajectories(tmpc, xmpc);
 
     plt.show();

@@ -15,7 +15,7 @@ import matplotlib.path as path
 
 
 # hyper parameters
-m = 1.00;       # hummingbird mass [g]
+m = 3.00;       # hummingbird mass [g]
 g = 9.81;       # gravitational energy
 c = 0.20;       # coefficient of air friction
 eps = 0.1;      # disturbance range -> [-eps, eps]
@@ -265,13 +265,13 @@ def dmodel(x, u):
     return xplus;
 
 # assorted plotting functions
-def plotTrajectories(tList, xList, fig=None, axsList=None, leg=None):
+def plotTrajectories(tList, xList, fig=None, axsList=None, legend=None):
     if fig is None:
         fig, axsList = plt.subplots(len(states), len(states[0]));
 
     for j, axs in enumerate(axsList):
         for k, i in enumerate(states[j]):
-            axs[k].plot(tList[0], xList[i,:], label=leg);
+            axs[k].plot(tList[0], xList[i,:], label=legend);
             axs[k].set_ylabel(labels[i])
             if max( abs(xList[i,:]) ) < 1:
                 axs[k].set_ylim(-1,1);
@@ -280,7 +280,7 @@ def plotTrajectories(tList, xList, fig=None, axsList=None, leg=None):
     axsList[0,1].set_title('Velocity');
     axsList[0,2].set_title('Error');
 
-    if leg is not None:
+    if legend is not None:
         axsList[0,-1].legend(loc='upper right');
 
     return fig, axsList;
