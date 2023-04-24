@@ -76,15 +76,16 @@ def pidSimulation(tList, x0):
 if __name__ == "__main__":
     # initial position w/ disturbance
     eps = 1;
-    disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
+    disturbList = (3,);
+    disturbance = [[(i in disturbList)*eps] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
-    T = 100;  Nt = round(T/dt) + 1;
+    T = 25;  Nt = round(T/dt) + 1;
     tList = [[i*dt for i in range(Nt)]];
 
     # execute simulation
     xList = pidSimulation(tList, x0);
-    fig, axsList = plotTrajectories(labels, states, tList, xList);
-    print( xList[:,-1] );
+    print( xList[:,-1,None] );
+    fig, axsList = plotTrajectories(tList, xList, leg='PID');
     plt.show();

@@ -264,19 +264,22 @@ def dmodel(x, u):
     return xplus;
 
 # assorted plotting functions
-def plotTrajectories(labels, states, tList, xList, fig=None, axsList=None):
+def plotTrajectories(tList, xList, fig=None, axsList=None, leg=None):
     if fig is None:
         fig, axsList = plt.subplots(len(states), len(states[0]));
 
     for j, axs in enumerate(axsList):
         for k, i in enumerate(states[j]):
-            axs[k].plot(tList[0], xList[i,:], label=labels[i]);
-            axs[k].legend(loc='upper right');
+            axs[k].plot(tList[0], xList[i,:], label=leg);
+            axs[k].set_ylabel(labels[i])
             if max( abs(xList[i,:]) ) < 1:
                 axs[k].set_ylim(-1,1);
 
     axsList[0,0].set_title('Position');
     axsList[0,1].set_title('Velocity');
     axsList[0,2].set_title('Error');
+
+    if leg is not None:
+        axsList[0,-1].legend(loc='upper right');
 
     return fig, axsList;
