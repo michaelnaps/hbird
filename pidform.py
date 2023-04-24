@@ -2,9 +2,9 @@ from root import *
 
 # linear controller gains
 k = np.array( [
-    [0.99, 0.75, 0.001],
-    [0.99, 0.75, 0.001],
-    [0.99, 0.75, 0.001] ] );
+    [0.99, 0.80, 0.001],
+    [0.99, 0.80, 0.001],
+    [0.99, 0.80, 0.001] ] );
 
 # model and cost functions
 def linearize(x):
@@ -80,10 +80,11 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # simulation length
-    T = 20;  Nt = round(T/dt) + 1;
+    T = 100;  Nt = round(T/dt) + 1;
     tList = [[i*dt for i in range(Nt)]];
 
     # execute simulation
     xList = pidSimulation(tList, x0);
     fig, axsList = plotTrajectories(labels, states, tList, xList);
+    print( xList[:,-1] );
     plt.show();

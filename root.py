@@ -275,4 +275,8 @@ def plotTrajectories(labels, states, tList, xList, fig=None, axsList=None):
             if max( abs(xList[i,:]) ) < 1:
                 axs[k].set_ylim(-1,1);
 
+    axsList[0,0].set_title('Position');
+    axsList[0,1].set_title('Velocity');
+    axsList[0,2].set_title('Error');
+
     return fig, axsList;
