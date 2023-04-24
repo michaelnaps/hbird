@@ -6,6 +6,13 @@ k = np.array( [
     [0.99, 0.80, 0.001],
     [0.99, 0.80, 0.001] ] );
 
+
+for i in range( len(k) ):
+    for j in range( len(k[0]) ):
+        k[i,j] = 10*k[i,j];
+
+print( k );
+
 # model and cost functions
 def linearize(x):
     x = x.reshape(cNx,)
@@ -77,7 +84,7 @@ def pidSimulation(tList, x0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 1;
+    eps = 10;
     disturbList = (0,1,2,3,4);
     disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
