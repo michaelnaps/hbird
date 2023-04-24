@@ -6,7 +6,6 @@ k = np.array( [
     [0.99, 0.80, 0.001],
     [0.99, 0.80, 0.001] ] );
 
-
 for i in range( len(k) ):
     for j in range( len(k[0]) ):
         k[i,j] = 10*k[i,j];
