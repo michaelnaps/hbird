@@ -77,7 +77,7 @@ def pidSimulation(tList, x0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 10;
+    eps = 1;
     disturbList = (0,1,2,3,4);
     disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;

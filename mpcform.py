@@ -16,7 +16,7 @@ def cost(mvar, xList, uList):
 if __name__ == "__main__":
     # initial position w/ disturbance
     eps = 0.1;
-    disturbance = [[(i in states[:,0])*eps] for i in range(cNx)];
+    disturbance = [[0] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
@@ -28,12 +28,12 @@ if __name__ == "__main__":
     modelmpc = lambda x, u, _: dmodel(x,u);
     PH = 5;
     kl = 5;
-    max_iter = 250;
+    max_iter = 100;
     model_type = 'discrete';
     params = Vehicle(np.zeros((cNx,)), xdmpc);
     mvar = mpc.ModelPredictiveControl('ngd', modelmpc, cost, params, Nu,
         num_ssvar=cNx, PH_length=PH, knot_length=kl, time_step=dt,
-        appx_zero=1e-3, max_iter=max_iter, model_type=model_type);
+        max_iter=max_iter, model_type=model_type);
     mvar.setAlpha(1);
 
     # # get pid results
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     sim_time = 10;
     uinit = [0 for i in range(Nu*PH)];
     x0mpc = [x0[i][0] for i in range(cNx)];
-    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=0);
+    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=1);
     print('MPC Complete.');
 
     # # comparison plots
