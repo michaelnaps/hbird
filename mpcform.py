@@ -5,8 +5,8 @@ import pidform as pid
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
     k = [
-        40, 40, 40, 20, 20,         # position costs
-        1, 1, 1, 1, 1,              # velocity costs
+        30, 30, 50, 10, 10,         # position costs
+        5, 5, 5, 1, 1,              # velocity costs
         0.1, 0.1, 0.1, 0.1, 0.1     # steady state error costs
     ];
 
@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     # initial position w/ disturbance
     eps = 1.0;
-    disturbList = (0,1);
+    disturbList = (1,);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
