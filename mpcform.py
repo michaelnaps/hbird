@@ -14,9 +14,13 @@ def cost(mvar, xList, uList):
 
 # main execution block
 if __name__ == "__main__":
+    # time-step parameter
+    dt = dtmpc;
+
     # initial position w/ disturbance
-    eps = 0.1;
-    disturbance = [[0] for i in range(cNx)];
+    eps = 1.0;
+    disturbList = (2,);
+    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
@@ -26,8 +30,8 @@ if __name__ == "__main__":
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
     modelmpc = lambda x, u, _: dmodel(x,u);
-    PH = 5;
-    kl = 5;
+    PH = 10;
+    kl = 2;
     max_iter = 100;
     model_type = 'discrete';
     params = Vehicle(np.zeros((cNx,)), xdmpc);

@@ -22,7 +22,9 @@ eps = 0.1;      # disturbance range -> [-eps, eps]
 dNx = 5;
 cNx = 15;
 Nu = 3;
-dt = 0.01;
+
+dtpid = 0.01;
+dtmpc = 0.025;
 
 # label and state grouping meta-data
 xd = np.zeros( (cNx,1) );
@@ -238,6 +240,8 @@ def cmodel(x, u):
     return dx;
 
 def dmodel(x, u):
+    dt = dtmpc;
+
     F     = u[0];
     TauZ  = u[1];
     TauXY = u[2];
@@ -263,6 +267,13 @@ def dmodel(x, u):
     ];
 
     return xplus;
+
+def noise(eps, shape=None):
+    if shape is None:
+        return 2*eps*np.random.rand() - eps;
+    if len(shape) == 1:
+        return 2*eps*np.random.rand(shape[0]) - eps;
+    return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
 # assorted plotting functions
 def plotTrajectories(tList, xList, fig=None, axsList=None, legend=None):

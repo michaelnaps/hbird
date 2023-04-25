@@ -53,13 +53,6 @@ def control(x):
 
     return u;
 
-def noise(eps, shape=None):
-    if shape is None:
-        return 2*eps*np.random.rand() - eps;
-    if len(shape) == 1:
-        return 2*eps*np.random.rand(shape[0]) - eps;
-    return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
-
 # pid simulation function (for MPC comparison)
 def pidSimulation(tList, x0):
     # simulation time
@@ -76,8 +69,11 @@ def pidSimulation(tList, x0):
 
 # main execution block
 if __name__ == "__main__":
+    # time-step parameter
+    dt = dtpid;
+
     # initial position w/ disturbance
-    eps = 1;
+    eps = 1.0;
     disturbList = (0,1,2,3,4);
     disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
