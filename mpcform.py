@@ -22,8 +22,8 @@ if __name__ == "__main__":
     dt = dtmpc;
 
     # initial position w/ disturbance
-    eps = -1.0;
-    disturbList = (0,);
+    eps = 1.0;
+    disturbList = (0,1);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # print('PID Complete.');
 
     # solve single step
-    sim_time = 10;
+    sim_time = 5;
     uinit = [0 for i in range(Nu*PH)];
     x0mpc = [x0[i][0] for i in range(cNx)];
     mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=1);
