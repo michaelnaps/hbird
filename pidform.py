@@ -84,5 +84,5 @@ if __name__ == "__main__":
 
     # execute simulation
     xList = pidSimulation(tList, x0);
-    fig, axsList = plotTrajectories(tList, xList, legend='PID');
+    fig, axsList = plotTrajectories(tList, xList, xd, legend='PID');
     plt.show();

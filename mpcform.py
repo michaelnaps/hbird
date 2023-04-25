@@ -59,6 +59,6 @@ if __name__ == "__main__":
     # fig, axsList = plotTrajectories(tList, pid_results);
 
     tmpc = [mpc_results[0]];  xmpc = np.array( mpc_results[1] ).T;
-    fig, axsList = plotTrajectories(tmpc, xmpc);
+    fig, axsList = plotTrajectories(tmpc, xmpc, xd);
 
     plt.show();
