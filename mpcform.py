@@ -4,11 +4,15 @@ import pidform as pid
 # cost function
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
-    k = [30,30,100,20,20,5,5,5,1,1];
+    k = [
+        40, 40, 40, 20, 20,         # position costs
+        1, 1, 1, 1, 1,              # velocity costs
+        0.1, 0.1, 0.1, 0.1, 0.1     # steady state error costs
+    ];
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
-        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(2*dNx)]);
+        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(cNx)]);
 
     return C;
 
@@ -18,14 +22,14 @@ if __name__ == "__main__":
     dt = dtmpc;
 
     # initial position w/ disturbance
-    eps = 1.0;
-    disturbList = (2,);
-    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
+    eps = -1.0;
+    disturbList = (0,);
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
-    T = 20;  Nt = round(T/dt) + 1;
-    tList = [[i*dt for i in range(Nt)]];
+    T = 10;  Nt = round(T/dt) + 1;
+    tList = [ [i*dt for i in range(Nt)] ];
 
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
