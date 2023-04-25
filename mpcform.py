@@ -27,9 +27,9 @@ if __name__ == "__main__":
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
-    # simulation length
-    T = 10;  Nt = round(T/dt) + 1;
-    tList = [ [i*dt for i in range(Nt)] ];
+    # # simulation length
+    # T = 10;  Nt = round(T/dt) + 1;
+    # tList = [ [i*dt for i in range(Nt)] ];
 
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
