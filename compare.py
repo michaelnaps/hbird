@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # disturbList = (0,);
     # disturbList = (1,);
     # disturbList = (2,);
-    disturbList = (3,);
+    disturbList = (0,);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
