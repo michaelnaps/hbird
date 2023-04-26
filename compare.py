@@ -12,13 +12,11 @@ if __name__ == '__main__':
     # disturbList = (1,);
     # disturbList = (2,);
     # disturbList = (3,);
-    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
+    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
-    # run pid simulation
+    # run pid/mpc simulation
     tpid, xpid, upid = pidSimulation(sim_time, x0);
-
-    # run mpc simulation
     tmpc, xmpc, umpc = mpcSimulation(sim_time, x0, output=0);
 
     # plot comparisons
