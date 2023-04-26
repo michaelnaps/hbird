@@ -27,10 +27,6 @@ if __name__ == "__main__":
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
-    # # simulation length
-    # T = 10;  Nt = round(T/dt) + 1;
-    # tList = [ [i*dt for i in range(Nt)] ];
-
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
     modelmpc = lambda x, u, _: dmodel(x,u);
@@ -44,10 +40,6 @@ if __name__ == "__main__":
         max_iter=max_iter, model_type=model_type);
     mvar.setAlpha(1);
 
-    # # get pid results
-    # pid_results = pid.pidSimulation(tList, x0)
-    # print('PID Complete.');
-
     # solve single step
     sim_time = 5;
     uinit = [0 for i in range(Nu*PH)];
@@ -55,10 +47,7 @@ if __name__ == "__main__":
     mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=1);
     print('MPC Complete.');
 
-    # # comparison plots
-    # fig, axsList = plotTrajectories(tList, pid_results);
-
+    # plot results
     tmpc = [mpc_results[0]];  xmpc = np.array( mpc_results[1] ).T;
     fig, axsList = plotTrajectories(tmpc, xmpc, xd);
-
     plt.show();
