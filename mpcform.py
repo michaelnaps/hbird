@@ -35,13 +35,13 @@ def mpcSimulation(sim_time, x0):
     uinit = [0 for i in range(Nu*PH)];
     x0mpc = [x0[i][0] for i in range(cNx)];
     mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=1);
-    print('MPC Complete.');
 
     # formatting for use in plotting function
     tList = [mpc_results[0]];
     xList = np.array( mpc_results[1] ).T;
     uList = np.array( mpc_results[2] ).T;
 
+    print('MPC Complete.');
     return tList, xList, uList;
 
 # main execution block

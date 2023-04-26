@@ -59,13 +59,19 @@ def pidSimulation(tList, x0):
     Nt = len(tList[0]);
 
     # main simulation loop
-    x = x0;
     xList = np.empty( (cNx,Nt) );
-    for i in range(Nt):
-        x = x + dtpid*cmodel(x, control(x));
-        xList[:,i] = x[:,0];
+    uList = np.empty( (Nu,Nt-1) );
 
-    return xList;
+    x = x0;
+    xList[:,0] = x[:,0];
+    for i in range(Nt-1):
+        u = control(x);
+        x = x + dtpid*cmodel(x, u);
+        xList[:,i+1] = x[:,0];
+        uList[:,i] = u[:,0];
+
+    print('PID Complete.');
+    return xList, uList;
 
 # main execution block
 if __name__ == "__main__":
@@ -80,6 +86,6 @@ if __name__ == "__main__":
     tList = [[i*dtpid for i in range(Nt)]];
 
     # execute simulation
-    xList = pidSimulation(tList, x0);
+    xList, uList = pidSimulation(tList, x0);
     fig, axsList = plotTrajectories(tList, xList, xd, legend='PID');
     plt.show();
