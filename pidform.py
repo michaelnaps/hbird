@@ -54,9 +54,10 @@ def control(x):
     return u;
 
 # pid simulation function (for MPC comparison)
-def pidSimulation(tList, x0):
+def pidSimulation(sim_time, x0):
     # simulation time
-    Nt = len(tList[0]);
+    Nt = round(sim_time/dtpid) + 1;
+    tList = [ [i*dtpid for i in range(Nt)] ];
 
     # main simulation loop
     xList = np.empty( (cNx,Nt) );
@@ -71,7 +72,7 @@ def pidSimulation(tList, x0):
         uList[:,i] = u[:,0];
 
     print('PID Complete.');
-    return xList, uList;
+    return tList, xList, uList;
 
 # main execution block
 if __name__ == "__main__":
@@ -82,10 +83,9 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # simulation length
-    T = 15;  Nt = round(T/dtpid) + 1;
-    tList = [[i*dtpid for i in range(Nt)]];
+    sim_time = 10;
 
     # execute simulation
-    xList, uList = pidSimulation(tList, x0);
+    tList, xList, uList = pidSimulation(sim_time, x0);
     fig, axsList = plotTrajectories(tList, xList, xd, legend='PID');
     plt.show();

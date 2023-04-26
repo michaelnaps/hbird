@@ -17,7 +17,7 @@ def cost(mvar, xList, uList):
     return C;
 
 # mpc simulation function
-def mpcSimulation(sim_time, x0):
+def mpcSimulation(sim_time, x0, output=0):
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
     modelmpc = lambda x, u, _: dmodel(x,u);
@@ -34,7 +34,7 @@ def mpcSimulation(sim_time, x0):
     # solve for given time frame
     uinit = [0 for i in range(Nu*PH)];
     x0mpc = [x0[i][0] for i in range(cNx)];
-    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=1);
+    mpc_results = mvar.sim_root(sim_time, x0mpc, uinit, output=output);
 
     # formatting for use in plotting function
     tList = [mpc_results[0]];
