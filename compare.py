@@ -8,10 +8,10 @@ if __name__ == '__main__':
 
     # initial position w/ disturbance
     eps = 1.0;
-    # disturbList = (0,);
+    disturbList = (0,);
     # disturbList = (1,);
     # disturbList = (2,);
-    disturbList = (0,);
+    # disturbList = (3,);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
