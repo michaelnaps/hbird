@@ -62,16 +62,13 @@ def pidSimulation(tList, x0):
     x = x0;
     xList = np.empty( (cNx,Nt) );
     for i in range(Nt):
-        x = x + dt*cmodel(x, control(x));
+        x = x + dtpid*cmodel(x, control(x));
         xList[:,i] = x[:,0];
 
     return xList;
 
 # main execution block
 if __name__ == "__main__":
-    # time-step parameter
-    dt = dtpid;
-
     # initial position w/ disturbance
     eps = 1.0;
     disturbList = (0,1,2,3,4);
@@ -79,8 +76,8 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # simulation length
-    T = 15;  Nt = round(T/dt) + 1;
-    tList = [[i*dt for i in range(Nt)]];
+    T = 15;  Nt = round(T/dtpid) + 1;
+    tList = [[i*dtpid for i in range(Nt)]];
 
     # execute simulation
     xList = pidSimulation(tList, x0);
