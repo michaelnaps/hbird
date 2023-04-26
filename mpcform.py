@@ -23,7 +23,7 @@ def mpcSimulation(sim_time, x0, output=0):
     modelmpc = lambda x, u, _: dmodel(x,u);
     PH = 10;
     kl = 2;
-    max_iter = 100;
+    max_iter = 200;
     model_type = 'discrete';
     params = Vehicle(np.zeros((cNx,)), xdmpc);
     mvar = mpc.ModelPredictiveControl('ngd', modelmpc, cost, params, Nu,
@@ -48,13 +48,13 @@ def mpcSimulation(sim_time, x0, output=0):
 if __name__ == "__main__":
     # initial position w/ disturbance
     eps = 1.0;
-    disturbList = (0,);
+    disturbList = (0,1,2,3,4);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # get MPC results
-    sim_time = 1;
-    tList, xList, uList = mpcSimulation(sim_time, x0);
+    sim_time = 5.0;
+    tList, xList, uList = mpcSimulation(sim_time, x0, output=1);
 
     # plot results
     fig, axsList = plotTrajectories(tList, xList, xd, legend='MPC');
