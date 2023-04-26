@@ -4,19 +4,19 @@ from mpcform import *
 
 if __name__ == '__main__':
     # simulation time
-    sim_time = 1.0;
+    sim_time = 10.0;
 
     # initial position w/ disturbance
     eps = 1.0;
-    disturbList = (2,);
-    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
+    disturbList = (0,1,2,3,4);
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # run pid simulation
     tpid, xpid, upid = pidSimulation(sim_time, x0);
 
     # run mpc simulation
-    tmpc, xmpc, umpc = mpcSimulation(sim_time, x0, output=1);
+    tmpc, xmpc, umpc = mpcSimulation(sim_time, x0, output=0);
 
     # plot comparisons
     fig, axsList = plotTrajectories(tpid, xpid, xd,

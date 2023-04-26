@@ -286,8 +286,8 @@ def plotTrajectories(tList, xList, xRef, fig=None, axsList=None, legend=None):
             axs[k].plot([tList[0][0], tList[0][-1]], [xRef[i], xRef[i]],
                 color='r', linestyle='--');
             axs[k].set_ylabel(labels[i])
-            if max( abs(xList[i,:]) ) < 1:
-                axs[k].set_ylim(-1,1);
+            # if max( abs(xList[i,:]) ) < 1:
+            #     axs[k].set_ylim(-1,1);
 
     axsList[0,0].set_title('Position');
     axsList[0,1].set_title('Velocity');
