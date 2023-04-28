@@ -12,7 +12,7 @@ def cost(mvar, xList, uList):
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
-        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(cNx)]);
+        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(2*dNx)]);
 
     return C;
 
@@ -21,7 +21,7 @@ def mpcSimulation(sim_time, x0, output=0):
     # create MPC class variable
     xdmpc = [xd[i][0] for i in range(cNx)];
     modelmpc = lambda x, u, _: dmodel(x,u);
-    PH = 10;
+    PH = 5;
     kl = 2;
     max_iter = 200;
     model_type = 'discrete';
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # get MPC results
-    sim_time = 5.0;
+    sim_time = 10.0;
     tList, xList, uList = mpcSimulation(sim_time, x0, output=1);
 
     # plot results

@@ -296,6 +296,7 @@ def plotTrajectories(tList, xList, xRef, fig=None, axsList=None, legend=None):
     if legend is not None:
         axsList[0,-1].legend(loc='upper right');
 
+    fig.tight_layout();
     return fig, axsList;
 
 def plotControl(tList, uList, uRef=None, fig=None, axsList=None, legend=None):
