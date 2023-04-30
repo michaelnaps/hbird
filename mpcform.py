@@ -2,7 +2,7 @@ from root import *
 import pidform as pid
 
 kmpc = [
-    50, 50, 100, 10, 10,        # position costs
+    50, 50, 120, 10, 10,        # position costs
     5, 5, 5, 1, 1,              # velocity costs
     0.1, 0.1, 0.1, 0.1, 0.1     # steady state error costs
 ];

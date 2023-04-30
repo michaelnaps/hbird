@@ -276,18 +276,26 @@ def noise(eps, shape=None):
     return 2*eps*np.random.rand(shape[0], shape[1]) - eps;
 
 # assorted plotting functions
-def plotTrajectories(tList, xList, xRef, fig=None, axsList=None, legend=None):
+def plotTrajectories(tList, xList, xRef=None,
+    plotList=None, eList=None,
+    fig=None, axsList=None, linestyle=None, legend=None):
     if fig is None:
         fig, axsList = plt.subplots(len(states), len(states[0]));
 
     for j, axs in enumerate(axsList):
+
         for k, i in enumerate(states[j]):
-            axs[k].plot(tList[0], xList[i,:], label=legend);
-            axs[k].plot([tList[0][0], tList[0][-1]], [xRef[i], xRef[i]],
-                color='r', linestyle='--');
-            axs[k].set_ylabel(labels[i])
-            # if max( abs(xList[i,:]) ) < 1:
-            #     axs[k].set_ylim(-1,1);
+            if xRef is not None:
+                axs[k].plot([tList[0][0], tList[0][-1]], [xRef[i], xRef[i]],
+                    color='r', linestyle='--');
+
+            axs[k].plot(tList[0], xList[i,:], linestyle=linestyle, label=legend);
+            axs[k].set_ylabel(labels[i]);
+
+            if eList[i] > 0:
+                axs[k].set_ylim(-eList[i],eList[i])
+            elif max( abs(xList[i,:]) ) < 1:
+                axs[k].set_ylim(-1,1);
 
     axsList[0,0].set_title('Position');
     axsList[0,1].set_title('Velocity');
@@ -298,6 +306,3 @@ def plotTrajectories(tList, xList, xRef, fig=None, axsList=None, legend=None):
 
     fig.tight_layout();
     return fig, axsList;
-
-def plotControl(tList, uList, uRef=None, fig=None, axsList=None, legend=None):
-    return None;
