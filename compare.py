@@ -7,12 +7,14 @@ if __name__ == '__main__':
     sim_time = 10.0;
 
     # initial position w/ disturbance
-    eps = 1.0;
-    disturbList = (0,);
+    eps = 0.1;
+
+    # disturbance sets for final presentation
+    disturbList = (2,);
+    # disturbList = (2,3,4);
+    # disturbList = (0,);
     # disturbList = (1,);
-    # disturbList = (2,);
-    # disturbList = (3,);
-    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # run pid/mpc simulation

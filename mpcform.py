@@ -1,18 +1,19 @@
 from root import *
 import pidform as pid
 
+kmpc = [
+    50, 50, 100, 10, 10,        # position costs
+    5, 5, 5, 1, 1,              # velocity costs
+    0.1, 0.1, 0.1, 0.1, 0.1     # steady state error costs
+];
+
 # cost function
 def cost(mvar, xList, uList):
     xd = mvar.params.xd;
-    k = [
-        30, 30, 50, 10, 10,         # position costs
-        5, 5, 5, 1, 1,              # velocity costs
-        0.1, 0.1, 0.1, 0.1, 0.1     # steady state error costs
-    ];
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
-        C += sum([k[i]*(x[i] - xd[i])**2 for i in range(2*dNx)]);
+        C += sum([kmpc[i]*(x[i] - xd[i])**2 for i in range(cNx)]);
 
     return C;
 
@@ -47,9 +48,9 @@ def mpcSimulation(sim_time, x0, output=0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 1.0;
+    eps = 0.1;
     disturbList = (0,1,2,3,4);
-    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
+    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # get MPC results
