@@ -83,40 +83,12 @@ $$
         x_8 \\
         x_9 \\
         x_{10} \\
-        \frac{1}{m} u_1 \cos(x_4) \cos(x_5) \\
-        \frac{1}{m} u_1 \cos(x_4) \sin(x_5) \\
-        \frac{1}{m} (u_1 \sin(x_4) - mg) \\
+        \frac{1}{m} (u_1 \cos(x_4) \cos(x_5) - w x_6) \\
+        \frac{1}{m} (u_1 \cos(x_4) \sin(x_5) - w x_7) \\
+        \frac{1}{m} (u_1 \sin(x_4) - mg - w x_8) \\
         u_2 \\
         u_3
     \end{bmatrix}
 $$
 
-In order to collapse this system into the first-order domain, we will implement the discrete system form by exploting the integration function below.
-
-$$
-    x_{k+1} = x_k + \int_{t_0}^{t_0+T} f(t,x,u) dt
-$$
-
-Because the hummingbird system is time-invariant, we can set $t_0=0$ and solve for $x_{k+1}$. That is,
-
-$$
-    x_{k+1} = x_k + Tf(t,x,u)
-$$
-
-Making our discrete first-order system dynamics...
-
-$$
-    x_{k+1} = \begin{bmatrix}
-        x_1 \\
-        x_2 \\
-        x_3 \\
-        x_4 \\
-        x_5
-    \end{bmatrix} + T \begin{bmatrix}
-        \frac{1}{m} (u_1 \cos(x_4) \cos(x_5)) \\
-        \frac{1}{m} (u_1 \cos(x_4) \sin(x_5)) \\
-        \frac{1}{m} (u_1 \sin(x_4) - mg) \\
-        u_2 \\
-        u_3
-    \end{bmatrix}
-$$
+Where the scalar coefficient $w$ describes the damping coefficient.
