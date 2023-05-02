@@ -48,9 +48,8 @@ def mpcSimulation(sim_time, x0, output=0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 0.1;
-    disturbList = (0,1,2,3,4);
-    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
+    disturbList = (0,1)
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # get MPC results
@@ -58,5 +57,7 @@ if __name__ == "__main__":
     tList, xList, uList = mpcSimulation(sim_time, x0, output=1);
 
     # plot results
-    fig, axsList = plotTrajectories(tList, xList, xd, legend='MPC');
+    plotTrajectories(tList, xList, xd, eList=eList, legend='MPC');
     plt.show();
+
+    animateSingle(tList, xList);

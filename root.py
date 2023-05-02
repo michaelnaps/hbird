@@ -15,10 +15,10 @@ import matplotlib.path as path
 
 
 # hyper parameters
+eps = 0.5;      # disturbance range -> [-eps, eps]
 m = 3.00;       # hummingbird mass [g]
 g = 9.81;       # gravitational energy
 c = 2.00;       # coefficient of air friction
-eps = 0.1;      # disturbance range -> [-eps, eps]
 dNx = 5;
 cNx = 15;
 Nu = 3;
@@ -35,11 +35,14 @@ states = np.array( [
     [2, 7, 12],
     [3, 8, 13],
     [4, 9, 14]] );
-
+eList = (
+    10, 1, 10, np.pi/2, np.pi,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0);
 
 # simulation vehicle entity
 class Vehicle:
-    def __init__(self, x0, xd, fig=None, axs=None, buffer_length=10, pause=1e-3):
+    def __init__(self, x0, xd, fig=None, axs=None, buffer_length=100, pause=1e-3):
         # initialize figure properties
         if fig is None:
             self.fig = plt.figure();
@@ -48,11 +51,13 @@ class Vehicle:
             self.fig = fig;
             self.axs = axs;
 
+        # class variables
         self.xd = xd;
+        self.pause = pause;
 
-        self.axs.set_xlim3d(-10, 10);
-        self.axs.set_ylim3d(-10, 10);
-        self.axs.set_zlim3d(-10, 10);
+        self.axs.set_xlim3d(-eps, eps);
+        self.axs.set_ylim3d(-eps, eps);
+        self.axs.set_zlim3d(-eps, eps);
         # self.axs.axis('equal');
         # self.fig.tight_layout();
 
@@ -69,31 +74,29 @@ class Vehicle:
         y = x0[1];
         z = x0[2];
 
-        self.Fx_patch = patch.Arrow(x, y, 4, 0, color='r');
-        self.Fy_patch = patch.Arrow(x, y, 0, 4, color='g');
-        self.Fz_patch = patch.Arrow(z, x, 0, 4, color='b');
+        # self.Fx_patch = patch.Arrow(x, y, 4, 0, color='r');
+        # self.Fy_patch = patch.Arrow(x, y, 0, 4, color='g');
+        # self.Fz_patch = patch.Arrow(z, x, 0, 4, color='b');
 
-        self.axs.add_patch(self.Fx_patch);
-        self.axs.add_patch(self.Fy_patch);
-        self.axs.add_patch(self.Fz_patch);
+        # self.axs.add_patch(self.Fx_patch);
+        # self.axs.add_patch(self.Fy_patch);
+        # self.axs.add_patch(self.Fz_patch);
         self.axs.add_patch(self.trail_patch);
 
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fx_patch, zdir='z');
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fy_patch, zdir='z');
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fx_patch, zdir='z');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fy_patch, zdir='z');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
-        plt.show(block=0);
-        plt.close('all');
+        # plt.show(block=0);
+        # plt.close('all')l
+        return None;
 
-        # plot pause
-        self.pause = pause;
-
-    def update(self, mvar, t, x, u):
+    def update(self, t, x):
         # update trail
-        self.Fx_patch.remove();
-        self.Fy_patch.remove();
-        self.Fz_patch.remove();
+        # self.Fx_patch.remove();
+        # self.Fy_patch.remove();
+        # self.Fz_patch.remove();
         self.trail_patch.remove();
 
         self.buffer[:-1] = self.buffer[1:];
@@ -105,105 +108,30 @@ class Vehicle:
         delta = x[3];
         theta = x[4];
 
-        F = u[0];
-        Fx = F*np.cos(delta)*np.cos(theta);
-        Fy = F*np.cos(delta)*np.sin(theta);
-        Fz = F*np.sin(delta) - m*g;
+        # F = u[0];
+        # Fx = F*np.sin(delta)*np.cos(theta);
+        # Fy = F*np.sin(delta)*np.sin(theta);
+        # Fz = F*np.cos(delta) - m*g;
 
-        self.Fx_patch = patch.Arrow(xpos, ypos, 4*Fx, 0, color='r');
-        self.Fy_patch = patch.Arrow(xpos, ypos, 0, 4*Fy, color='g');
-        self.Fz_patch = patch.Arrow(zpos, xpos, 0, 4*Fz, color='b');
+        # self.Fx_patch = patch.Arrow(xpos, ypos, 4*Fx, 0, color='r');
+        # self.Fy_patch = patch.Arrow(xpos, ypos, 0, 4*Fy, color='g');
+        # self.Fz_patch = patch.Arrow(zpos, xpos, 0, 4*Fz, color='b');
         self.trail_patch = patch.PathPatch(path.Path(self.buffer[:,0:2]), fill=0);
 
-        self.axs.add_patch(self.Fx_patch);
-        self.axs.add_patch(self.Fy_patch);
-        self.axs.add_patch(self.Fz_patch);
+        # self.axs.add_patch(self.Fx_patch);
+        # self.axs.add_patch(self.Fy_patch);
+        # self.axs.add_patch(self.Fz_patch);
         self.axs.add_patch(self.trail_patch);
 
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fx_patch, zdir='z');
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fy_patch, zdir='z');
-        plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fx_patch, zdir='z');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fy_patch, zdir='z');
+        # plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
         plt.show(block=0);
         plt.pause(self.pause);
 
         return self;
-
-# class for dynamic programming
-class DynamicProgramming:
-    def __init__(self, pcost, tcost, model, N, Nx, Nu,
-        params=None, max_iter=10,
-        appx_zero=1e-6, grad_step=1e-3):
-        self.pcost = pcost;
-        self.tcost = tcost;
-        self.model = model;
-        self.params = params;
-
-        self.N = N;
-        self.Nx = Nx;
-        self.Nu = Nu;
-
-        self.zero = appx_zero;
-        self.step = grad_step;
-
-        # if nmax is -1 -> no iteration cap
-        self.nmax = max_iter;
-
-        self._alpha = 1;
-
-    def setAlpha(self, a):
-        self._alpha = a;
-        return;
-
-    def forward(self, x0, uinit, N=None, output=0):
-        # if N (prediction horizon) not given
-        if N is None:
-            # start alg. with class N
-            return self.forward(x0, uinit, self.N, output);
-
-        # if N = 1 end recursion by minimizing with terminal cost
-        if N == 1:
-            cost = lambda u: self.pcost(x0,u) + self.tcost( self.model(x0,u) );
-            ustar, Jstar = self.minimize(cost, uinit);
-            return ustar, Jstar, self.model( x0,ustar );
-
-        cost = lambda u: self.pcost( x0,u ) + self.forward( self.model(x0, u), u, N=N-1 )[1];
-        ustar, Jstar = self.minimize(cost, uinit);
-        return ustar, Jstar;
-
-    def minimize(self, cost, uinit, h=1e-3):
-        un = [uinit[i] for i in range(self.Nu)];
-        gn = self.fdm(cost, un, h=self.step);
-        gnorm = sum([gn[i]**2 for i in range(self.Nu)]);
-
-        # gradient descent loop
-        count = 1;
-        while gnorm > self.zero**2:
-            un = [un[i] - self._alpha*gn[i] for i in range(self.Nu)];
-            gn = self.fdm(cost, un, h=self.step);
-            gnorm = sum([gn[i]**2 for i in range(self.Nu)]);
-
-            count += 1;
-            if (self.nmax != -1) and (count > self.nmax-1):  # iteration limit
-                print('WARNING: Iteration break in DynamicProgramming.minimize()');
-                break;
-
-        return un, cost(un);
-
-    def fdm(self, cost, u, h=1e-3):
-        dJ = [0 for i in range(self.Nu)];
-
-        for i in range(self.Nu):
-            un1 = [u[j] - (i==j)*h for j in range(self.Nu)];
-            up1 = [u[j] + (i==j)*h for j in range(self.Nu)];
-
-            Jn1 = cost(un1);
-            Jp1 = cost(up1);
-
-            dJ[i] = (Jp1 - Jn1)/(2*h);
-
-        return dJ;
 
 # model functions
 def cmodel(x, u):
@@ -306,3 +234,21 @@ def plotTrajectories(tList, xList, xRef=None,
 
     fig.tight_layout();
     return fig, axsList;
+
+def animateSingle(tList, xList):
+    # initialize plot and vehicle variables
+    vhc = Vehicle(xList[:,0], xd);
+
+    # iterate through list of states
+    Nt = len(tList[0]);
+    for i in range(Nt):
+        vhc.update(i, xList[:,i]);
+
+    return vhc;
+
+def animateComparisons(tList, xPID, xMPX):
+    fig, axs = plt.subplots();
+
+    # initialize vehicles
+    vhc_pid = Vehicle(xPID[:Nx,0,None], xd, fig=fig, axs=axs);
+    vhc_mpc = Vehicle(xMPC[:Nx,0,None], xd, fig=fig, axs=axs);

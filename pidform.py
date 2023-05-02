@@ -77,8 +77,8 @@ def pidSimulation(sim_time, x0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 0.25;
-    disturbList = (0,1,2,3,4);
+    eps = 1.00;
+    disturbList = (2,);
     disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
@@ -87,5 +87,8 @@ if __name__ == "__main__":
 
     # execute simulation
     tList, xList, uList = pidSimulation(sim_time, x0);
-    fig, axsList = plotTrajectories(tList, xList, xd, legend='PID');
+
+    plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
     plt.show();
+
+    animateSingle(tList, xList);
