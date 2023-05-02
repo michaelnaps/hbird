@@ -79,7 +79,7 @@ if __name__ == "__main__":
     # initial position w/ disturbance
     eps = 1.00;
     disturbList = (3,4);
-    disturbance = [[noise(eps)*(i in disturbList)] for i in range(cNx)];
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # simulation length
@@ -88,7 +88,11 @@ if __name__ == "__main__":
     # execute simulation
     tList, xList, uList = pidSimulation(sim_time, x0);
 
-    plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
-    plt.show();
+    # plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
+    # plt.show();
 
-    animateSingle(tList, xList, legend='PID');
+    spEntity = StatePlots(tList, xList[:,0], xd, limits=eList);
+    # animateSingle(tList, xList, legend='PID');
+
+    for i, t in enumerate(tList[0][1:]):
+        spEntity.update(t, xList[:,i])
