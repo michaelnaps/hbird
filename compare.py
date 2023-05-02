@@ -7,15 +7,14 @@ if __name__ == '__main__':
     sim_time = 5.0;
 
     # initial position w/ disturbance
-    eps = 0.75;
     eList = (
         10, 1, 10, np.pi/2, np.pi,
         0, 0, 0, 0, 0,
         0, 0, 0, 0, 0);
 
     # disturbance sets for final presentation
-    disturbList = (2,);  plotList = (0,);
-    # disturbList = (2,3,4);
+    # disturbList = (2,);  plotList = (0,);
+    disturbList = (2,);
     # disturbList = (0,);  plotList = (0,2);
     # disturbList = (1,);
 
@@ -34,3 +33,5 @@ if __name__ == '__main__':
         eList=eList,
         fig=fig, axsList=axsList, legend='MPC');
     plt.show();
+
+    animateComparisons(tpid, xpid, xmpc);

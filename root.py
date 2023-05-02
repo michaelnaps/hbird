@@ -19,6 +19,7 @@ eps = 0.5;      # disturbance range -> [-eps, eps]
 m = 3.00;       # hummingbird mass [g]
 g = 9.81;       # gravitational energy
 c = 2.00;       # coefficient of air friction
+N3 = 3;
 dNx = 5;
 cNx = 15;
 Nu = 3;
@@ -36,13 +37,15 @@ states = np.array( [
     [3, 8, 13],
     [4, 9, 14]] );
 eList = (
-    10, 1, 10, np.pi/2, np.pi,
+    10, 5, 10, np.pi/2, np.pi,
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0);
 
 # simulation vehicle entity
 class Vehicle:
-    def __init__(self, x0, xd, fig=None, axs=None, buffer_length=100, pause=1e-3):
+    def __init__(self, x0, xd,
+        fig=None, axs=None, title=None, legend=None,
+        buffer_length=100, pause=1e-3):
         # initialize figure properties
         if fig is None:
             self.fig = plt.figure();
@@ -51,9 +54,13 @@ class Vehicle:
             self.fig = fig;
             self.axs = axs;
 
+        if title is not None:
+            plt.set_title( title );
+
         # class variables
         self.xd = xd;
         self.pause = pause;
+        self.legend=legend;
 
         self.axs.set_xlim3d(-eps, eps);
         self.axs.set_ylim3d(-eps, eps);
@@ -67,7 +74,8 @@ class Vehicle:
 
         # initialize buffer (trail)
         self.buffer = np.kron( np.ones( (buffer_length, 1) ), x0 );
-        self.trail_patch = patch.PathPatch(path.Path(self.buffer[:,0:2]));
+        self.trail_patch = patch.PathPatch(path.Path(self.buffer[:,0:2]),
+            label=self.legend);
 
         # initialize force directions
         x = x0[0];
@@ -88,10 +96,6 @@ class Vehicle:
         # plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
-        # plt.show(block=0);
-        # plt.close('all')l
-        return None;
-
     def update(self, t, x):
         # update trail
         # self.Fx_patch.remove();
@@ -102,11 +106,11 @@ class Vehicle:
         self.buffer[:-1] = self.buffer[1:];
         self.buffer[-1] = x;
 
-        xpos = x[0];
-        ypos = x[1];
-        zpos = x[2];
-        delta = x[3];
-        theta = x[4];
+        # xpos = x[0];
+        # ypos = x[1];
+        # zpos = x[2];
+        # delta = x[3];
+        # theta = x[4];
 
         # F = u[0];
         # Fx = F*np.sin(delta)*np.cos(theta);
@@ -128,10 +132,37 @@ class Vehicle:
         # plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
+        self.axs.legend();
         plt.show(block=0);
         plt.pause(self.pause);
 
         return self;
+
+class StatePlots:
+    def __init__(self, x0, xd, tList,
+        fig=None, axsMat=None, color='r', linestyle=None,
+        buffer_length=100):
+        self.n = len(states);
+        self.m = len(states[0]);
+        if fig is None and axs is None:
+            self.fig, self.axsMat = plt.subplots(self.n, self.m);
+
+            titleList = ('Position', 'Velocity', 'Error');
+            for i, axs in enumerate(self.axsMat[0]):
+                axs.set_title(titleList[i]);
+        else:
+            self.fig = fig;
+            self.axsMat = axsMat;
+
+        self.tList = tList;
+        self.Nt = len(self.tList[0]);
+        self.bufferMat = np.empty( (cNx, buffer_length) );
+        self.pathPatchList = np.empty( (cNx,) );
+        for i in range(n*m):
+            self.bufferMat[i] = [x0[i] for j in range(Nt)];
+            bufferPatch = path.Patch( [self.bufferMat[i], self.tList[0]] );
+            self.pathPatchList[i] = patch.PathPatch( bufferPatch );
+
 
 # model functions
 def cmodel(x, u):
@@ -235,9 +266,10 @@ def plotTrajectories(tList, xList, xRef=None,
     fig.tight_layout();
     return fig, axsList;
 
-def animateSingle(tList, xList):
+def animateSingle(tList, xList, legend=None):
     # initialize plot and vehicle variables
-    vhc = Vehicle(xList[:,0], xd);
+    vhc = Vehicle(xList[:,0], xd, legend=legend);
+    plt.show(block=0);
 
     # iterate through list of states
     Nt = len(tList[0]);
@@ -246,9 +278,18 @@ def animateSingle(tList, xList):
 
     return vhc;
 
-def animateComparisons(tList, xPID, xMPX):
-    fig, axs = plt.subplots();
-
+def animateComparisons(tList, xPID, xMPC):
     # initialize vehicles
-    vhc_pid = Vehicle(xPID[:Nx,0,None], xd, fig=fig, axs=axs);
-    vhc_mpc = Vehicle(xMPC[:Nx,0,None], xd, fig=fig, axs=axs);
+    vhc_pid = Vehicle(xPID[:N3,0], xd, legend='PID');
+    vhc_mpc = Vehicle(xMPC[:N3,0], xd, fig=vhc_pid.fig, axs=vhc_pid.axs,
+        legend='MPC');
+
+    # simulation loop
+    Nt = len(tList[0]);
+    j = 0;
+    skip = round( dtmpc/dtpid );
+    for i in range(Nt):
+        vhc_pid.update(i, xPID[:N3,i]);
+        if i % skip == 0:
+            vhc_mpc.update(i, xMPC[:N3,j]);
+            j += skip;
