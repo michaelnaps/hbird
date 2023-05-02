@@ -37,7 +37,7 @@ states = np.array( [
     [3, 8, 13],
     [4, 9, 14]] );
 eList = (
-    10, 5, 10, np.pi/2, np.pi,
+    eps, eps, eps, eps, eps,
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0);
 
@@ -165,7 +165,8 @@ class StatePlots:
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
                 stateid = states[i][j];
-                # axs.axis('equal');
+                axs.plot([tList[0][0], tList[0][-1]], [xd[i], xd[i]],
+                    color='r', linestyle=':');
                 axs.set_xlim(0, self.tList[0][-1]);
                 axs.grid(1);
                 if self.limits[stateid] != 0:

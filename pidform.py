@@ -77,8 +77,7 @@ def pidSimulation(sim_time, x0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    eps = 1.00;
-    disturbList = (3,4);
+    disturbList = (2,3,4);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
@@ -88,11 +87,19 @@ if __name__ == "__main__":
     # execute simulation
     tList, xList, uList = pidSimulation(sim_time, x0);
 
-    # plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
-    # plt.show();
+    # stationary plot
+    plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
+    plt.show();
 
-    spEntity = StatePlots(tList, xList[:,0], xd, limits=eList);
-    # animateSingle(tList, xList, legend='PID');
+    # execute simulation
+    dtsim = 0.1;
+    isim = round(dtsim/dtmpc);
 
-    for i, t in enumerate(tList[0][1:]):
-        spEntity.update(t, xList[:,i])
+    tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
+    spEntity = StatePlots(tSim, xList[:,0], xd, limits=eList);
+
+    j = 0;
+    for t in tSim[0][1:]:
+        print(spEntity.UPDATE_NUM, t);
+        spEntity.update(t, xList[:,j]);
+        j += isim;

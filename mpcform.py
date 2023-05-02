@@ -48,16 +48,27 @@ def mpcSimulation(sim_time, x0, output=0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    disturbList = (0,1)
+    disturbList = (2,3,4)
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # get MPC results
-    sim_time = 10.0;
-    tList, xList, uList = mpcSimulation(sim_time, x0, output=1);
+    sim_time = 5.0;
+    tList, xList, uList = mpcSimulation(sim_time, x0, output=0);
 
     # plot results
     plotTrajectories(tList, xList, xd, eList=eList, legend='MPC');
     plt.show();
 
-    animateSingle(tList, xList);
+    # execute simulation
+    dtsim = 0.1;
+    isim = round(dtsim/dtmpc);
+
+    tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
+    spEntity = StatePlots(tSim, xList[:,0], xd, limits=eList);
+
+    j = 0;
+    for t in tSim[0][1:]:
+        print(spEntity.UPDATE_NUM, t);
+        spEntity.update(t, xList[:,j]);
+        j += isim;
