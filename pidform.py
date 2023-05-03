@@ -89,17 +89,17 @@ if __name__ == "__main__":
 
     # stationary plot
     plotTrajectories(tList, xList, xd, eList=eList, legend='PID');
-    plt.show();
+    plt.show(block=0);
 
     # execute simulation
     dtsim = 0.1;
-    isim = round(dtsim/dtmpc);
+    isim = round(dtsim/dtpid);
 
     tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
-    spEntity = StatePlots(tSim, xList[:,0], xd, limits=eList);
+    spEntity = StatePlots(tSim, xList[:,0], xd,
+        color='royalblue', limits=eList);
 
-    j = 0;
+    j = isim;
     for t in tSim[0][1:]:
-        print(spEntity.UPDATE_NUM, t);
         spEntity.update(t, xList[:,j]);
         j += isim;

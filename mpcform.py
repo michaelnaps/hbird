@@ -53,12 +53,12 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # get MPC results
-    sim_time = 5.0;
+    sim_time = 10.0;
     tList, xList, uList = mpcSimulation(sim_time, x0, output=0);
 
     # plot results
     plotTrajectories(tList, xList, xd, eList=eList, legend='MPC');
-    plt.show();
+    plt.show(block=0);
 
     # execute simulation
     dtsim = 0.1;
@@ -67,8 +67,8 @@ if __name__ == "__main__":
     tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
     spEntity = StatePlots(tSim, xList[:,0], xd, limits=eList);
 
-    j = 0;
+    j = isim;
     for t in tSim[0][1:]:
-        print(spEntity.UPDATE_NUM, t);
+        print(spEntity.UPDATE_NUM, t, tList[0][j]);
         spEntity.update(t, xList[:,j]);
         j += isim;

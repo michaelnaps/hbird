@@ -140,7 +140,7 @@ class Vehicle:
 
 class StatePlots:
     def __init__(self, tList, x0, xd, limits=None,
-        fig=None, axsMat=None, color='r', linestyle=None,
+        fig=None, axsMat=None, color='k', linestyle=None,
         pause=1e-3):
         self.n = len(states);
         self.m = len(states[0]);
@@ -154,13 +154,17 @@ class StatePlots:
             self.fig = fig;
             self.axsMat = axsMat;
 
+        # plotting variables
         self.UPDATE_NUM = 0;
-
-        self.xd = xd;
         self.limits = limits;
+        self.pause = pause;
+        self.color = color;
+        self.linestyle = linestyle;
+
+        # state space variables
+        self.xd = xd;
         self.tList = tList;
         self.Nt = len(self.tList[0]);
-        self.pause = pause;
 
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
@@ -172,7 +176,7 @@ class StatePlots:
                 if self.limits[stateid] != 0:
                     axs.set_ylim(-self.limits[stateid], self.limits[stateid])
                 else:
-                    axs.set_ylim(-5,5);
+                    axs.set_ylim(-2*eps,2*eps);
 
         self.bufferMat = np.empty( (cNx, self.Nt) );
         self.pathPatchList = np.empty( (cNx,), dtype=patch.PathPatch );
@@ -203,7 +207,8 @@ class StatePlots:
             bufferPath = np.array( [tList, buffer] );
             bufferPathPatch = path.Path( bufferPath.T );
 
-            self.pathPatchList[i] = patch.PathPatch( bufferPathPatch, fill=0 );
+            self.pathPatchList[i] = patch.PathPatch( bufferPathPatch,
+                color=self.color, linestyle=self.linestyle, fill=0 );
 
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
