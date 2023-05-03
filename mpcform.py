@@ -24,7 +24,7 @@ def mpcSimulation(sim_time, x0, output=0):
     modelmpc = lambda x, u, _: dmodel(x,u);
     PH = 5;
     kl = 2;
-    max_iter = 200;
+    max_iter = 100;
     model_type = 'discrete';
     params = Vehicle(np.zeros((cNx,)), xdmpc);
     mvar = mpc.ModelPredictiveControl('ngd', modelmpc, cost, params, Nu,
@@ -53,22 +53,23 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # get MPC results
-    sim_time = 10.0;
+    sim_time = 5.0;
     tList, xList, uList = mpcSimulation(sim_time, x0, output=0);
 
     # plot results
-    plotTrajectories(tList, xList, xd, eList=eList, legend='MPC');
+    plotTrajectories(tList, xList, xd, limits=limits, legend='MPC');
     plt.show(block=0);
 
     # execute simulation
     dtsim = 0.1;
+    Ntsim = round(sim_time/dtsim)+1
     isim = round(dtsim/dtmpc);
 
-    tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
-    spEntity = StatePlots(tSim, xList[:,0], xd, limits=eList);
+    tSim = [ [i*dtsim for i in range( Ntsim )] ];
+    spEntity = StatePlots(tSim, xList[:,0], xd, limits=limits);
 
     j = isim;
     for t in tSim[0][1:]:
-        print(spEntity.UPDATE_NUM, t, tList[0][j]);
+        # print(spEntity.UPDATE_NUM, t, tList[0][j]);
         spEntity.update(t, xList[:,j]);
         j += isim;

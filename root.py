@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d as plt3d
 import matplotlib.patches as patch
 import matplotlib.path as path
+import matplotlib.collections as coll
 
 
 # hyper parameters
@@ -36,9 +37,9 @@ states = np.array( [
     [2, 7, 12],
     [3, 8, 13],
     [4, 9, 14]] );
-eList = (
-    10, 1, 10, np.pi/2, np.pi,
-    0, 0, 10, 0, 0,
+limits = (
+    10, 10, eps, eps, eps,
+    10, 10, 10, 0, 0,
     0, 0, 0, 0, 0);
 
 # simulation vehicle entity
@@ -196,8 +197,6 @@ class StatePlots:
         self.remove_patches();
         self.update_buffer(x);
         self.update_figure();
-        plt.show(block=0);
-        plt.pause(self.pause)
         return self;
 
     def remove_patches(self):
@@ -224,7 +223,7 @@ class StatePlots:
     def update_figure(self):
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
-                axs.add_patch( self.pathPatchList[states[i][j]] )
+                axs.add_patch( self.pathPatchList[states[i][j]] );
 
 # model functions
 def cmodel(x, u):
@@ -298,7 +297,7 @@ def noise(eps, shape=None):
 
 # assorted plotting functions
 def plotTrajectories(tList, xList, xRef=None,
-    plotList=None, eList=None,
+    plotList=None, limits=None,
     fig=None, axsList=None, linestyle=None, legend=None):
     if fig is None:
         fig, axsList = plt.subplots(len(states), len(states[0]));
@@ -313,8 +312,8 @@ def plotTrajectories(tList, xList, xRef=None,
             axs[k].plot(tList[0], xList[i,:], linestyle=linestyle, label=legend);
             axs[k].set_ylabel(labels[i]);
 
-            if eList[i] > 0:
-                axs[k].set_ylim(-eList[i],eList[i])
+            if limits[i] > 0:
+                axs[k].set_ylim(-limits[i],limits[i])
             elif max( abs(xList[i,:]) ) < 1:
                 axs[k].set_ylim(-1,1);
 
