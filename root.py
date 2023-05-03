@@ -37,8 +37,8 @@ states = np.array( [
     [3, 8, 13],
     [4, 9, 14]] );
 eList = (
-    eps, eps, eps, eps, eps,
-    0, 0, 0, 0, 0,
+    10, 1, 10, np.pi/2, np.pi,
+    0, 0, 10, 0, 0,
     0, 0, 0, 0, 0);
 
 # simulation vehicle entity
@@ -96,6 +96,9 @@ class Vehicle:
         # plt3d.art3d.pathpatch_2d_to_3d(self.Fz_patch, zdir='y');
         plt3d.art3d.pathpatch_2d_to_3d(self.trail_patch, z=self.buffer[:,2]);
 
+        plt.show(block=0);
+        plt.close('all');
+
     def update(self, t, x):
         # update trail
         # self.Fx_patch.remove();
@@ -141,9 +144,9 @@ class Vehicle:
 class StatePlots:
     def __init__(self, tList, x0, xd, limits=None,
         fig=None, axsMat=None, color='k', linestyle=None,
-        pause=1e-3):
+        zorder=1, pause=1e-3):
         self.n = len(states);
-        self.m = len(states[0]);
+        self.m = len(states[0]) - 1;
         if (fig is None) or (axsMat is None):
             self.fig, self.axsMat = plt.subplots(self.n, self.m);
 
@@ -160,6 +163,8 @@ class StatePlots:
         self.pause = pause;
         self.color = color;
         self.linestyle = linestyle;
+        self.linewidth = 2;
+        self.zorder = zorder;
 
         # state space variables
         self.xd = xd;
@@ -179,7 +184,7 @@ class StatePlots:
                     axs.set_ylim(-2*eps,2*eps);
 
         self.bufferMat = np.empty( (cNx, self.Nt) );
-        self.pathPatchList = np.empty( (cNx,), dtype=patch.PathPatch );
+        self.pathPatchList = np.empty( (2*dNx,), dtype=patch.PathPatch );
         for i in range(self.n*self.m):
             self.bufferMat[i] = [x0[i] for j in range(self.Nt)];
 
@@ -207,8 +212,9 @@ class StatePlots:
             bufferPath = np.array( [tList, buffer] );
             bufferPathPatch = path.Path( bufferPath.T );
 
-            self.pathPatchList[i] = patch.PathPatch( bufferPathPatch,
-                color=self.color, linestyle=self.linestyle, fill=0 );
+            self.pathPatchList[i] = patch.PathPatch(bufferPathPatch,
+                color=self.color, linestyle=self.linestyle,
+                linewidth=self.linewidth, zorder=self.zorder, fill=0);
 
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
