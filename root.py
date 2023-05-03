@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d as plt3d
 import matplotlib.patches as patch
 import matplotlib.path as path
-import matplotlib.collections as coll
+import matplotlib.lines as lines
 
 
 # hyper parameters
@@ -165,14 +165,18 @@ class StatePlots:
 
         # state space variables
         self.xd = xd;
-        self.tList = tList;
-        self.Nt = len(self.tList[0]);
+        self.tList = [[0] for i in range( len(tList[0]) )];
+        self.Nt = len( self.tList[0] );
 
         self.init_axes();
 
-        self.bufferMat = np.empty( (cNx, self.Nt) );
-        self.pathPatchList = np.empty( (self.n*self.m,), dtype=patch.PathPatch );
-        self.update_buffer(x0);
+        self.bufferList = np.empty( (cNx, self.Nt) );
+        self.lineList = np.empty( (self.n*self.m,), dtype=lines.Line2D );
+
+        for i, axsList in enumerate( self.axsMat ):
+            for j, axs in enumerate( axsList ):
+                xid = states[i][j];
+                self.lineList[xid], = axs.plot( self.tList[0], self.bufferList[xid] );
 
         self.update_figure();
 
@@ -194,8 +198,8 @@ class StatePlots:
         return self;
 
     def update(self, t, x):
-        self.remove_patches();
-        self.update_buffer(x);
+        # self.remove_patches();
+        self.update_buffer(t, x);
         self.update_figure();
         return self;
 
@@ -203,27 +207,21 @@ class StatePlots:
         for i, pathEntity in enumerate(self.pathPatchList):
             pathEntity.remove();
 
-    def update_buffer(self, x):
+    def update_buffer(self, t, x):
         self.UPDATE_NUM += 1;
 
+        self.tList[0][self.UPDATE_NUM] = t;
         for i in range(self.n*self.m):
-            self.bufferMat[i][self.UPDATE_NUM] = x[i];
+            self.bufferList[i][self.UPDATE_NUM] = x[i];
 
-            buffer = self.bufferMat[i][:self.UPDATE_NUM+1];
-            tList = self.tList[0][:self.UPDATE_NUM+1];
-            bufferPath = np.array( [tList, buffer] );
-            bufferPathPatch = path.Path( bufferPath.T );
-
-            self.pathPatchList[i] = patch.PathPatch(bufferPathPatch,
-                color=self.color, linestyle=self.linestyle,
-                linewidth=self.linewidth, zorder=self.zorder, fill=0);
+            self.lineList[i].set_xdata(self.tList);
+            self.lineList[i].set_ydata(self.bufferList[i]);
 
         return self;
 
     def update_figure(self):
-        for i, axsList in enumerate(self.axsMat):
-            for j, axs in enumerate(axsList):
-                axs.add_patch( self.pathPatchList[states[i][j]] );
+        self.fig.canvas.draw();
+        self.fig.canvas.flush_events();
 
 # model functions
 def cmodel(x, u):
