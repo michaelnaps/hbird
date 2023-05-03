@@ -82,7 +82,7 @@ if __name__ == "__main__":
     x0 = xd + disturbance;
 
     # simulation length
-    sim_time = 10;
+    sim_time = 5.0;
 
     # execute simulation
     tList, xList, uList = pidSimulation(sim_time, x0);
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     plt.show(block=0);
 
     # execute simulation
-    dtsim = 0.1;
+    dtsim = 0.05;
     isim = round(dtsim/dtpid);
 
     tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];

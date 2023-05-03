@@ -160,15 +160,14 @@ class StatePlots:
         self.pause = pause;
         self.color = color;
         self.linestyle = linestyle;
-        self.linewidth = 2;
         self.zorder = zorder;
 
         # state space variables
         self.xd = xd;
-        self.tList = [[0] for i in range( len(tList[0]) )];
+        self.tList = [ [0 for i in range( len(tList[0]) )] ];
         self.Nt = len( self.tList[0] );
 
-        self.init_axes();
+        self.init_axes( tList[0][-1] );
 
         self.bufferList = np.empty( (cNx, self.Nt) );
         self.lineList = np.empty( (self.n*self.m,), dtype=lines.Line2D );
@@ -176,25 +175,31 @@ class StatePlots:
         for i, axsList in enumerate( self.axsMat ):
             for j, axs in enumerate( axsList ):
                 xid = states[i][j];
-                self.lineList[xid], = axs.plot( self.tList[0], self.bufferList[xid] );
+                self.lineList[xid], = axs.plot( self.tList[0], self.bufferList[xid],
+                    color=self.color, linestyle=self.linestyle, zorder=self.zorder );
 
         self.update_figure();
 
-    def init_axes(self):
+        plt.show(block=0);
+
+    def init_axes(self, tFinal):
+        # axes titles
         titleList = ('Position', 'Velocity', 'Error');
         for i, axs in enumerate(self.axsMat[0]):
             axs.set_title(titleList[i]);
+
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
                 stateid = states[i][j];
                 axs.plot([self.tList[0][0], self.tList[0][-1]], [self.xd[i], self.xd[i]],
                     color='r', linestyle=':');
-                axs.set_xlim(0, self.tList[0][-1]);
+                axs.set_xlim(0, tFinal);
                 axs.grid(1);
                 if self.limits[stateid] != 0:
                     axs.set_ylim(-self.limits[stateid], self.limits[stateid])
                 else:
                     axs.set_ylim(-2*eps,2*eps);
+
         return self;
 
     def update(self, t, x):
@@ -208,11 +213,13 @@ class StatePlots:
             pathEntity.remove();
 
     def update_buffer(self, t, x):
-        self.UPDATE_NUM += 1;
 
-        self.tList[0][self.UPDATE_NUM] = t;
+        self.tList[0][:-1] = self.tList[0][1:];
+        self.tList[0][-1] = t;
+
         for i in range(self.n*self.m):
-            self.bufferList[i][self.UPDATE_NUM] = x[i];
+            self.bufferList[i][:-1] = self.bufferList[i][1:];
+            self.bufferList[i][-1] = x[i];
 
             self.lineList[i].set_xdata(self.tList);
             self.lineList[i].set_ydata(self.bufferList[i]);

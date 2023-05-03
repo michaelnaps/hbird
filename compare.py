@@ -4,21 +4,21 @@ from mpcform import *
 
 if __name__ == '__main__':
     # simulation time
-    sim_time = 5;
+    sim_time = 5.0;
 
     # initial position w/ disturbance
-    limits = (
-        10, 1, 10, np.pi/2, np.pi,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0);
+    # limits = (
+    #     10, 1, 10, np.pi/2, np.pi,
+    #     0, 0, 0, 0, 0,
+    #     0, 0, 0, 0, 0);
 
     # disturbance sets for final presentation
-    # disturbList = (2,);  plotList = (0,);
-    disturbList = (2,);
     # disturbList = (0,);  plotList = (0,2);
     # disturbList = (1,);
+    # disturbList = (2,);
+    disturbList = (2,3,4);
 
-    disturbance = [[eps*limits[i]*(i in disturbList)] for i in range(cNx)];
+    disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
     # run pid/mpc simulation
