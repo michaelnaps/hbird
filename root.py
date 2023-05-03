@@ -16,7 +16,7 @@ import matplotlib.lines as lines
 
 
 # hyper parameters
-eps = 0.5;      # disturbance range -> [-eps, eps]
+eps = 1.0;      # disturbance range -> [-eps, eps]
 m = 3.00;       # hummingbird mass [g]
 g = 9.81;       # gravitational energy
 c = 2.00;       # coefficient of air friction
@@ -38,8 +38,8 @@ states = np.array( [
     [3, 8, 13],
     [4, 9, 14]] );
 limits = (
-    10, 10, eps, eps, eps,
-    10, 10, 10, 0, 0,
+    10, 5, 1.1, 0, 0,
+    5, 3, 0, 3, 1.4,
     0, 0, 0, 0, 0);
 
 # simulation vehicle entity
@@ -145,30 +145,35 @@ class Vehicle:
 class StatePlots:
     def __init__(self, tList, x0, xd, limits=None,
         fig=None, axsMat=None, color='k', linestyle=None,
-        zorder=1, pause=1e-3):
+        label=None, zorder=1, pause=1e-3):
+
         self.n = len(states);
         self.m = len(states[0]) - 1;
+        self.xd = xd;
+
+        # plotting variables
+        self.limits = limits;
+        self.pause = pause;
+
         if (fig is None) or (axsMat is None):
             self.fig, self.axsMat = plt.subplots(self.n, self.m);
+            self.init_axes( tList[0][-1] );
+            self.init_titles();
         else:
             self.fig = fig;
             self.axsMat = axsMat;
 
-        # plotting variables
-        self.UPDATE_NUM = -1;
-        self.limits = limits;
-        self.pause = pause;
-        self.color = color;
-        self.linestyle = linestyle;
-        self.zorder = zorder;
-
         # state space variables
-        self.xd = xd;
         self.tList = [ [0 for i in range( len(tList[0]) )] ];
         self.Nt = len( self.tList[0] );
+        self.init_buffer(color, linestyle, label, zorder);
 
-        self.init_axes( tList[0][-1] );
+        self.update_figure();
+        self.axsMat[0][-1].legend(loc='upper right');
+        self.fig.tight_layout();
+        plt.show(block=0);  # show plot before returning
 
+    def init_buffer(self, color='k', linestyle=None, label=None, zorder=1):
         self.bufferList = np.empty( (cNx, self.Nt) );
         self.lineList = np.empty( (self.n*self.m,), dtype=lines.Line2D );
 
@@ -176,30 +181,30 @@ class StatePlots:
             for j, axs in enumerate( axsList ):
                 xid = states[i][j];
                 self.lineList[xid], = axs.plot( self.tList[0], self.bufferList[xid],
-                    color=self.color, linestyle=self.linestyle, zorder=self.zorder );
+                    color=color, linestyle=linestyle,
+                    label=label, zorder=zorder );
 
-        self.update_figure();
-
-        plt.show(block=0);
+        return self;
 
     def init_axes(self, tFinal):
-        # axes titles
+        for i, axsList in enumerate(self.axsMat):
+            for j, axs in enumerate(axsList):
+                xid = states[i][j];
+                axs.plot([0, tFinal], [self.xd[i], self.xd[i]],
+                    color='r', linestyle=':', label='Ref.');
+                axs.set_xlim(0, tFinal);
+                if self.limits[xid] != 0:
+                    axs.set_ylim(-self.limits[xid], self.limits[xid])
+                else:
+                    axs.set_ylim(-2*eps,2*eps);
+                axs.set_ylabel( labels[xid] );
+                axs.grid(1);
+        return self;
+
+    def init_titles(self):
         titleList = ('Position', 'Velocity', 'Error');
         for i, axs in enumerate(self.axsMat[0]):
             axs.set_title(titleList[i]);
-
-        for i, axsList in enumerate(self.axsMat):
-            for j, axs in enumerate(axsList):
-                stateid = states[i][j];
-                axs.plot([self.tList[0][0], self.tList[0][-1]], [self.xd[i], self.xd[i]],
-                    color='r', linestyle=':');
-                axs.set_xlim(0, tFinal);
-                axs.grid(1);
-                if self.limits[stateid] != 0:
-                    axs.set_ylim(-self.limits[stateid], self.limits[stateid])
-                else:
-                    axs.set_ylim(-2*eps,2*eps);
-
         return self;
 
     def update(self, t, x):

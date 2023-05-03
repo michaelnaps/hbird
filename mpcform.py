@@ -9,7 +9,7 @@ kmpc = [
 
 # cost function
 def cost(mvar, xList, uList):
-    xd = mvar.params.xd;
+    xd = mvar.params;
 
     C = 0;  j = 0;
     for i, x in enumerate(xList):
@@ -26,7 +26,7 @@ def mpcSimulation(sim_time, x0, output=0):
     kl = 2;
     max_iter = 100;
     model_type = 'discrete';
-    params = Vehicle(np.zeros((cNx,)), xdmpc);
+    params = xdmpc;
     mvar = mpc.ModelPredictiveControl('ngd', modelmpc, cost, params, Nu,
         num_ssvar=cNx, PH_length=PH, knot_length=kl, time_step=dtmpc,
         max_iter=max_iter, model_type=model_type);
