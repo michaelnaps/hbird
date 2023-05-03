@@ -149,16 +149,12 @@ class StatePlots:
         self.m = len(states[0]) - 1;
         if (fig is None) or (axsMat is None):
             self.fig, self.axsMat = plt.subplots(self.n, self.m);
-
-            titleList = ('Position', 'Velocity', 'Error');
-            for i, axs in enumerate(self.axsMat[0]):
-                axs.set_title(titleList[i]);
         else:
             self.fig = fig;
             self.axsMat = axsMat;
 
         # plotting variables
-        self.UPDATE_NUM = 0;
+        self.UPDATE_NUM = -1;
         self.limits = limits;
         self.pause = pause;
         self.color = color;
@@ -171,10 +167,22 @@ class StatePlots:
         self.tList = tList;
         self.Nt = len(self.tList[0]);
 
+        self.init_axes();
+
+        self.bufferMat = np.empty( (cNx, self.Nt) );
+        self.pathPatchList = np.empty( (self.n*self.m,), dtype=patch.PathPatch );
+        self.update_buffer(x0);
+
+        self.update_figure();
+
+    def init_axes(self):
+        titleList = ('Position', 'Velocity', 'Error');
+        for i, axs in enumerate(self.axsMat[0]):
+            axs.set_title(titleList[i]);
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
                 stateid = states[i][j];
-                axs.plot([tList[0][0], tList[0][-1]], [xd[i], xd[i]],
+                axs.plot([self.tList[0][0], self.tList[0][-1]], [self.xd[i], self.xd[i]],
                     color='r', linestyle=':');
                 axs.set_xlim(0, self.tList[0][-1]);
                 axs.grid(1);
@@ -182,26 +190,21 @@ class StatePlots:
                     axs.set_ylim(-self.limits[stateid], self.limits[stateid])
                 else:
                     axs.set_ylim(-2*eps,2*eps);
-
-        self.bufferMat = np.empty( (cNx, self.Nt) );
-        self.pathPatchList = np.empty( (2*dNx,), dtype=patch.PathPatch );
-        for i in range(self.n*self.m):
-            self.bufferMat[i] = [x0[i] for j in range(self.Nt)];
-
-            bufferPath = np.array( [self.tList[0], self.bufferMat[i]] );
-            bufferPathPatch = path.Path( bufferPath.T );
-
-            self.pathPatchList[i] = patch.PathPatch( bufferPathPatch );
-
-        for i, axsList in enumerate(self.axsMat):
-            for j, axs in enumerate(axsList):
-                stateid = states[i][j];
-                axs.add_patch( self.pathPatchList[stateid] )
+        return self;
 
     def update(self, t, x):
+        self.remove_patches();
+        self.update_buffer(x);
+        self.update_figure();
+        plt.show(block=0);
+        plt.pause(self.pause)
+        return self;
+
+    def remove_patches(self):
         for i, pathEntity in enumerate(self.pathPatchList):
             pathEntity.remove();
 
+    def update_buffer(self, x):
         self.UPDATE_NUM += 1;
 
         for i in range(self.n*self.m):
@@ -216,14 +219,12 @@ class StatePlots:
                 color=self.color, linestyle=self.linestyle,
                 linewidth=self.linewidth, zorder=self.zorder, fill=0);
 
+        return self;
+
+    def update_figure(self):
         for i, axsList in enumerate(self.axsMat):
             for j, axs in enumerate(axsList):
                 axs.add_patch( self.pathPatchList[states[i][j]] )
-
-        plt.show(block=0);
-        plt.pause(self.pause)
-
-        return self;
 
 # model functions
 def cmodel(x, u):
