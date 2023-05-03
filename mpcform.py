@@ -48,7 +48,7 @@ def mpcSimulation(sim_time, x0, output=0):
 # main execution block
 if __name__ == "__main__":
     # initial position w/ disturbance
-    disturbList = (2,3,4)
+    disturbList = (2,3,4);
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
 
