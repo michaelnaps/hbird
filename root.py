@@ -38,12 +38,12 @@ states = np.array( [
     [3, 8, 13],
     [4, 9, 14]]);
 limits_upper = (
-    10., 10., 1.2, 1.2, 1.2,
-    5.0, 5.0, 0.5, 0.5, 0.5,
-    eps, eps, eps, eps, eps);
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0);
 limits_lower = (
-    2.0, 2.0, 0.2, 0.5, 0.1,
-    2.0, 2.0, 5.0, 5.0, 5.0,
+    eps, eps, eps, eps, eps,
+    eps, eps, eps, eps, eps,
     eps, eps, eps, eps, eps);
 
 # simulation vehicle entity
