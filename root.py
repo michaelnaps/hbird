@@ -36,11 +36,15 @@ states = np.array( [
     [1, 6, 11],
     [2, 7, 12],
     [3, 8, 13],
-    [4, 9, 14]] );
-limits = (
-    10, 5, 1.1, 0, 0,
-    5, 3, 0, 3, 1.4,
-    0, 0, 0, 0, 0);
+    [4, 9, 14]]);
+limits_upper = (
+    10., 10., 1.2, 1.2, 1.2,
+    5.0, 5.0, 0.5, 0.5, 0.5,
+    eps, eps, eps, eps, eps);
+limits_lower = (
+    2.0, 2.0, 0.2, 0.5, 0.1,
+    2.0, 2.0, 5.0, 5.0, 5.0,
+    eps, eps, eps, eps, eps);
 
 # simulation vehicle entity
 class Vehicle:
@@ -143,7 +147,8 @@ class Vehicle:
         return self;
 
 class StatePlots:
-    def __init__(self, tList, x0, xd, limits=None,
+    def __init__(self, tList, x0, xd,
+        limits_lower=None, limits_upper=None,
         fig=None, axsMat=None, color='k', linestyle=None,
         label=None, zorder=1, pause=1e-3):
 
@@ -152,7 +157,8 @@ class StatePlots:
         self.xd = xd;
 
         # plotting variables
-        self.limits = limits;
+        self.limits_lower = limits_lower;
+        self.limits_upper = limits_upper;
         self.pause = pause;
 
         if (fig is None) or (axsMat is None):
@@ -181,7 +187,7 @@ class StatePlots:
             for j, axs in enumerate( axsList ):
                 xid = states[i][j];
                 self.lineList[xid], = axs.plot( self.tList[0], self.bufferList[xid],
-                    color=color, linestyle=linestyle,
+                    color=color, linestyle=linestyle, linewidth=2,
                     label=label, zorder=zorder );
 
         return self;
@@ -193,10 +199,7 @@ class StatePlots:
                 axs.plot([0, tFinal], [self.xd[i], self.xd[i]],
                     color='r', linestyle=':', label='Ref.');
                 axs.set_xlim(0, tFinal);
-                if self.limits[xid] != 0:
-                    axs.set_ylim(-self.limits[xid], self.limits[xid])
-                else:
-                    axs.set_ylim(-2*eps,2*eps);
+                axs.set_ylim(-self.limits_lower[xid], self.limits_upper[xid])
                 axs.set_ylabel( labels[xid] );
                 axs.grid(1);
         return self;

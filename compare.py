@@ -4,7 +4,7 @@ from mpcform import *
 
 if __name__ == '__main__':
     # simulation time
-    sim_time = 5.0;
+    sim_time = 3.0;
 
     # initial position w/ disturbance
     # limits = (
@@ -16,9 +16,10 @@ if __name__ == '__main__':
     # disturbList = (0,);
     # disturbList = (1,);
     # disturbList = (2,);
+    # disturbList = (0,1,2);
     # disturbList = (2,3,4);
-    disturbList = (0,2,3,4);
-    # disturbList = (0,1,2,3,4);
+    # disturbList = (0,2,3,4);
+    disturbList = (0,1,2,3,4);
 
     disturbance = [[eps*(i in disturbList)] for i in range(cNx)];
     x0 = xd + disturbance;
@@ -29,10 +30,10 @@ if __name__ == '__main__':
 
     # plot comparisons
     fig, axsList = plotTrajectories(tPID, xPID,
-        xRef=xd, limits=limits,
+        xRef=xd, limits=limits_upper,
         legend='PID');
     fig, axsList = plotTrajectories(tMPC, xMPC,
-        limits=limits,
+        limits=limits_upper,
         fig=fig, axsList=axsList, legend='MPC');
     plt.show(block=0);
 
@@ -44,10 +45,10 @@ if __name__ == '__main__':
 
     # animate comparisons
     StatesPID = StatePlots(tSim, xPID[:,0], xd,
-        label='PID', limits=limits,
+        label='PID', limits_lower=limits_lower, limits_upper=limits_upper,
         color='royalblue', zorder=10);
     StatesMPC = StatePlots(tSim, xMPC[:,0], xd,
-        label='MPC', limits=limits,
+        label='MPC', limits_lower=limits_lower, limits_upper=limits_upper,
         fig=StatesPID.fig, axsMat=StatesPID.axsMat,
         color='orange', linestyle='--', zorder=100);
 
