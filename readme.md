@@ -1,8 +1,8 @@
 ### **Hummingbird Model**
 
-This repository serves as the testing grounds for my joint project in the Boston University classes EC 710/ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D steered vehicle.
+This repository serves as the testing grounds for my project in the Boston University class ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D point-mass with assorted dynamics.
 
-The control paramters are a single lift force pushing the the bird's personal $z$-axes, and two rotations angles; $\theta$ which defines the birds rotation around the world frame $z$-axis, and $\delta$ which defines the bird's offset from the $z$-axis.
+The control paramters are a single lift force pushing through the bird's center of mass $z$-axes, and two rotations angles; $\theta$ which defines the birds displacement from the world frame $x$-axis, and $\delta$ which defines the bird's displacement from the $z$-axis.
 
 The state space form, represented by a second-order system of five continuous parameters is shown below.
 
@@ -72,9 +72,9 @@ $$
         \dot z \\
         \dot \delta \\
         \dot \theta \\
-        F \cos(\delta) \cos(\theta) \\
-        F \cos(\delta) \sin(\theta) \\
-        F \sin(\delta) \\
+        \frac{1}{m} (F \cos(x_4) \cos(x_5) - w x_6) \\
+        \frac{1}{m} (F \cos(x_4) \sin(x_5) - w x_7) \\
+        \frac{1}{m} (F \sin(x_4) - w x_8 - mg) \\
         \tau_z \\
         \tau_{xy}
     \end{bmatrix} = \begin{bmatrix}
@@ -85,10 +85,10 @@ $$
         x_{10} \\
         \frac{1}{m} (u_1 \cos(x_4) \cos(x_5) - w x_6) \\
         \frac{1}{m} (u_1 \cos(x_4) \sin(x_5) - w x_7) \\
-        \frac{1}{m} (u_1 \sin(x_4) - mg - w x_8) \\
+        \frac{1}{m} (u_1 \sin(x_4) - w x_8 - mg) \\
         u_2 \\
         u_3
     \end{bmatrix}
 $$
 
-Where the scalar coefficient $w$ describes the damping coefficient.
+Where the scalar coefficient $w$ describes the air coefficient of friction.
