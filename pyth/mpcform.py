@@ -57,7 +57,7 @@ if __name__ == "__main__":
     tList, xList, uList = mpcSimulation(sim_time, x0, output=0);
 
     # plot results
-    plotTrajectories(tList, xList, xd, limits=limits, legend='MPC');
+    plotTrajectories(tList, xList, xd, limits=limits_upper, legend='MPC');
     plt.show(block=0);
 
     # execute simulation
@@ -66,7 +66,8 @@ if __name__ == "__main__":
     isim = round(dtsim/dtmpc);
 
     tSim = [ [i*dtsim for i in range( Ntsim )] ];
-    spEntity = StatePlots(tSim, xList[:,0], xd, limits=limits);
+    spEntity = StatePlots(tSim, xList[:,0], xd,
+        limits_upper=limits_upper, limits_lower=limits_lower);
 
     j = isim;
     for t in tSim[0][1:]:

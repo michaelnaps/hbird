@@ -88,7 +88,7 @@ if __name__ == "__main__":
     tList, xList, uList = pidSimulation(sim_time, x0);
 
     # stationary plot
-    plotTrajectories(tList, xList, xd, limits=limits, legend='PID');
+    plotTrajectories(tList, xList, xd, limits=limits_upper, legend='PID');
     plt.show(block=0);
 
     # execute simulation
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     tSim = [ [i*dtsim for i in range( round(sim_time/dtsim)+1 )] ];
     spEntity = StatePlots(tSim, xList[:,0], xd,
-        color='royalblue', limits=limits);
+        color='royalblue', limits_upper=limits_upper, limits_lower=limits_lower);
 
     j = isim;
     for t in tSim[0][1:]:
