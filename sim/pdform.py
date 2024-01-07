@@ -1,7 +1,15 @@
 from root import *
 
+k = -np.array( [10, 2.5] )
+
 def control(x):
-    return np.zeros( (m, x.shape[1]) )
+    u = np.array( [
+        k[0]*x[2] + k[1]*x[8],
+        k[0]*x[3] + k[1]*x[9],
+        k[0]*x[4] + k[1]*x[10],
+        k[0]*x[5] + k[1]*x[11]
+    ] )
+    return u
 
 if __name__ == '__main__':
     # Simulation length.
