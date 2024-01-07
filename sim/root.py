@@ -1,9 +1,14 @@
 import numpy as np
 
+# System dimensions.
+n = 12          # Dimensions of state space.
+m = 4           # Number of control inputs.
+
 # Hyper parameter(s).
-g = -9.81
-m = 1
-dt = 1e-3
+M = 1           # Center of mass [g].
+g = -9.81       # Gravity coefficient [m/s^2].
+c = 1e-3        # Coefficient of air friction.
+dt = 1e-3       # Simulation time-step [s].
 
 # 3-D rotation functions.
 def rotx(theta):
@@ -32,11 +37,17 @@ def rotz(theta):
 
 # Model function.
 def model(x, u):
-    n = 6
-    Fz = (u[0] + m*g)*np.array( [[0],[0],[1]] )
-    dx = np.vstack( (
-        x[:n],
+    # Lift force.
+    Fz = (u[0] + M*g)*np.array( [[0],[0],[1]] )
+
+    # First derivative.
+    dx = x[round( n/2 ):]
+
+    # Second derivative.
+    ddx = np.vstack( (
         rotz( x[3] )@roty( x[4] )@rotx( x[5] )@Fz,
         u[1:]
-    ) )
-    return x + dt*dx
+    ) ) - c*dx
+
+    # Return next value of simulation.
+    return x + dt*np.vstack( (dx, ddx) )
