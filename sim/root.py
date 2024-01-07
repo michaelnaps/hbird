@@ -33,7 +33,7 @@ def rotz(theta):
 # Model function.
 def model(x, u):
     n = 6
-    Fz = np.array( [[0],[0],u[0] + m*g] )
+    Fz = (u[0] + m*g)*np.array( [[0],[0],[1]] )
     dx = np.vstack( (
         x[:n],
         rotz( x[3] )@roty( x[4] )@rotx( x[5] )@Fz,
