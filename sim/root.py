@@ -5,7 +5,7 @@ n = 12          # Dimensions of state space.
 m = 4           # Number of control inputs.
 
 # Hyper parameter(s).
-M = 1           # Center of mass [g].
+M = 4.00        # Center of mass [g].
 g = -9.81       # Gravity coefficient [m/s^2].
 c = 1e-3        # Coefficient of air friction.
 dt = 1e-3       # Simulation time-step [s].
@@ -38,7 +38,7 @@ def rotz(theta):
 # Model function.
 def model(x, u):
     # Lift force.
-    Fz = (u[0] + M*g)*np.array( [[0],[0],[1]] )
+    Fz = np.array( [[0],[0],(u[0] + M*g)] )
 
     # First derivative.
     dx = x[round( n/2 ):]
