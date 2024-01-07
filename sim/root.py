@@ -1,13 +1,14 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # System dimensions.
 n = 12          # Dimensions of state space.
 m = 4           # Number of control inputs.
 
 # Hyper parameter(s).
-M = 4.00        # Center of mass [g].
+M = 1.00        # Center of mass [g].
 g = -9.81       # Gravity coefficient [m/s^2].
-c = 1e-3        # Coefficient of air friction.
+c = 1e-1        # Coefficient of air friction.
 dt = 1e-3       # Simulation time-step [s].
 
 # 3-D rotation functions.
@@ -38,14 +39,15 @@ def rotz(theta):
 # Model function.
 def model(x, u):
     # Lift force.
-    Fz = np.array( [[0],[0],(u[0] + M*g)] )
+    F = np.array( [[0],[0],u[0]] )
+    G = np.array( [[0],[0],[M*g]] )
 
     # First derivative.
     dx = x[round( n/2 ):]
 
     # Second derivative.
     ddx = np.vstack( (
-        rotz( x[3] )@roty( x[4] )@rotx( x[5] )@Fz,
+        rotz( x[3] )@roty( x[4] )@rotx( x[5] )@F + G,
         u[1:]
     ) ) - c*dx
 
