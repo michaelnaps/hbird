@@ -2,7 +2,7 @@
 
 This repository serves as the testing grounds for my project in the Boston University class ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D point-mass with assorted dynamics.
 
-The control paramters are a single lift force pushing through the bird's center of mass $z$-axes, and two rotations angles: $\theta$ which defines the birds displacement from the world frame $x$-axis, and $\delta$ which defines the bird's displacement from the $z$-axis.
+The control paramters are a single lift force pushing through the bird's center of mass $z$-axes, and two rotations angles; $\theta$ which defines the birds displacement from the world frame $x$-axis, and $\delta$ which defines the bird's displacement from the $z$-axis.
 
 The state space form, represented by a second-order system of five continuous parameters is shown below.
 
