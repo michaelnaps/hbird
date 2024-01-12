@@ -7,10 +7,10 @@ r = 1/1.00 # -1/250
 
 def control(x):
     u = np.array( [
-        k*x[2] + c*x[8],
+        (k*x[2] + c*x[8]),
         (k*x[3] + c*x[9]) + (h*x[1] + r*x[7]),
         (k*x[4] + c*x[10]) + (h*x[0] + r*x[6]),
-        k*x[5] + c*x[11]
+        (k*x[5] + c*x[11])
     ] )
     return u
 
