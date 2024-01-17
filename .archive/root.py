@@ -325,17 +325,17 @@ def plotTrajectories(tList, xList, xRef=None,
             axs[k].plot(tList[0], xList[i,:], linestyle=linestyle, label=legend)
             axs[k].set_ylabel(labels[i])
 
-            if limits[i] > 0:
-                axs[k].set_ylim(-limits[i],limits[i])
-            elif max( abs(xList[i,:]) ) < 1:
-                axs[k].set_ylim(-1,1)
+            # if limits[i] > 0:
+            #     axs[k].set_ylim(-limits[i],limits[i])
+            # elif max( abs(xList[i,:]) ) < 1:
+            #     axs[k].set_ylim(-1,1)
 
     axsList[0,0].set_title('Position')
     axsList[0,1].set_title('Velocity')
     axsList[0,2].set_title('Error')
 
     if legend is not None:
-        axsList[0,-1].legend(loc='upper right')
+        axsList[0,1].legend(loc='upper right')
 
     fig.tight_layout()
     return fig, axsList

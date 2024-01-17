@@ -6,7 +6,7 @@ filepath = '/home/michaelnaps/prog/bu_classes/me762/final_project/figures'
 
 if __name__ == '__main__':
     # simulation time
-    sim_time = 3.0
+    sim_time = 5.0
 
     # initial position w/ disturbance
     # limits = (
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     # disturbList = (0,)
     # disturbList = (1,)
     # disturbList = (2,)
-    # disturbList = (0,1,2)
-    disturbList = (2,3,4)
+    disturbList = (0,1,2)
+    # disturbList = (2,3,4)
     # disturbList = (0,2,3,4)
     # disturbList = (0,1,2,3,4)
 
@@ -34,10 +34,10 @@ if __name__ == '__main__':
     if ans == 'p' or ans == 'save':
         # plot comparisons
         fig, axsList = plotTrajectories(tPID, xPID,
-            xRef=xd, limits=limits_upper,
+            xRef=xd, #limits=limits_upper,
             legend='PID')
         fig, axsList = plotTrajectories(tMPC, xMPC,
-            limits=limits_upper,
+            #limits=limits_upper,
             fig=fig, axsList=axsList, legend='MPC')
 
         if ans == 'p':
