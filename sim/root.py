@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # System dimensions.
 n = 12          # Dimensions of state space.
-m = 4           # Number of control inputs.
+m = 4           # Dimensions of controller.
 
 # Hyper parameter(s).
 M = 1.00        # Center of mass [g].
@@ -12,6 +12,7 @@ c = 1e-1        # Coefficient of air friction.
 dt = 1e-3       # Simulation time-step [s].
 
 # 3-D rotation functions.
+# Rotation about the x-axis.
 def rotx(theta):
     R = np.array( [
         [1, 0, 0],
@@ -20,6 +21,7 @@ def rotx(theta):
     ] )
     return R
 
+# Rotation about the y-axis.
 def roty(theta):
     R = np.array( [
         [np.cos(theta[0]), 0, -np.sin(theta[0])],
@@ -28,6 +30,7 @@ def roty(theta):
     ] )
     return R
 
+# Rotation about the z-axis.
 def rotz(theta):
     R = np.array( [
         [np.cos(theta[0]), -np.sin(theta[0]), 0],
@@ -36,7 +39,7 @@ def rotz(theta):
     ] )
     return R
 
-# Model function.
+# Hummingbird model function.
 def model(x, u):
     # Lift force.
     F = np.array( [[0],[0],u[0]] )
