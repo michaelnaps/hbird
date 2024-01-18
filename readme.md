@@ -1,3 +1,6 @@
+This readme has become outdated w.r.t my recent developments. The model presented here was sufficient for my ME 762 report (discussed below), but is being re-evaluated as I have some free time at the moment. The new model is capable of establishing stability via a simple PD controller, unlike that which is discussed here.
+
+___
 ### **Hummingbird Model**
 
 This repository serves as the testing grounds for my project in the Boston University class ME 762. I will be attempting to simulate and control a simple hummingbird robot - modelled as a 3-D point-mass with assorted dynamics.
