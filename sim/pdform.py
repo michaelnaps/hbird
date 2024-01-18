@@ -20,10 +20,11 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    # A = np.pi/2
+    A = np.pi/2
     Xlist = np.empty( (n,Nt) )
+    Xlist[:,0] = 2*A*np.random.rand( n, ) - A
     # Xlist[:,0] = np.array( [float(i==4) for i in range( n )] )
-    Xlist[:,0] = np.ones( (n,) )
+    # Xlist[:,0] = np.ones( (n,) )
 
     # Simulation block.
     for i in range( Nt-1 ):
