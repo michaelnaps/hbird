@@ -47,7 +47,7 @@ def model(x, u):
 
     # Second derivative.
     ddx = np.vstack( (
-        rotz( x[3] )@roty( x[4] )@rotx( x[5] )@F + G,
+        rotx( x[3] )@roty( x[4] )@rotz( x[5] )@F + G,
         u[1:]
     ) ) - c*dx
 
