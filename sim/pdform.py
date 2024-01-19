@@ -51,6 +51,9 @@ if __name__ == '__main__':
 
     # Plot simulation results (3D).
     fig = plt.figure()
-    axs = fig.add_subplot( projection='3d' )
-    axs.plot( Xlist[0], Xlist[1], Xlist[2] )
+
+    for i, X in enumerate( (Xlist[:3], Xlist[3:6]) ):
+        axs = fig.add_subplot( 1, 2, i+1, projection='3d' )
+        axs.plot( X[0], X[1], X[2] )
+
     plt.show()
