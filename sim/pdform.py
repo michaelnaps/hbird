@@ -23,8 +23,8 @@ if __name__ == '__main__':
     # Date set initialization.
     A = np.pi/2
     Xlist = np.empty( (n,Nt) )
-    # Xlist[:,0] = 2*A*np.random.rand( n, ) - A
-    Xlist[:,0] = np.array( [np.pi/2*float(i==5 or i==1) for i in range( n )] )
+    Xlist[:,0] = 2*A*np.random.rand( n, ) - A
+    # Xlist[:,0] = np.array( [np.pi/2*float(i==5 or i==1) for i in range( n )] )
     # Xlist[:,0] = np.ones( (n,) )
 
     # Simulation block.
@@ -51,7 +51,6 @@ if __name__ == '__main__':
 
     # Plot simulation results (3D).
     fig = plt.figure()
-    print( type( fig ) )
     axs = fig.add_subplot( projection='3d' )
-    axs.plot( Xlist[:3] )
+    axs.plot( Xlist[0], Xlist[1], Xlist[2] )
     plt.show()
