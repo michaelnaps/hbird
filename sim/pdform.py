@@ -1,19 +1,21 @@
 from root import *
 
+w = 10
+
 k = -10.0
 c = -2.50
 h = 1/5.00
 r = 1/1.00 # -1/250
 
 # PD controller.
-def control(x):
-    u = np.array( [
-        (k*x[2] + c*x[8] - M*g),
-        (k*x[3] + c*x[9]) + (h*x[1] + r*x[7]),
-        (k*x[4] + c*x[10]) + (h*x[0] + r*x[6]),
-        0*(k*x[5] + c*x[11])
+def control(X):
+    U = np.array( [
+        (k*X[2] + c*X[8] - M*g),
+        (k*X[3] + c*X[9]) + (h*X[1] + r*X[7]),
+        (k*X[4] + c*X[10]) + (h*X[0] + r*X[6]),
+        (k*X[5] + c*X[11])
     ] )
-    return u
+    return U
 
 if __name__ == '__main__':
     # Simulation length.
@@ -22,15 +24,13 @@ if __name__ == '__main__':
 
     # Date set initialization.
     A = np.pi/2
-    Xlist = np.empty( (n,Nt) )
-    # Xlist[:,0] = 2*A*np.random.rand( n, ) - A
-    Xlist[:,0] = np.array( [np.pi/2*float(i==5 or i==1) for i in range( n )] )
-    # Xlist[:,0] = np.ones( (n,) )
+    Xlist = np.empty( (n,w,Nt) )
+    Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
 
     # Simulation block.
     for i in range( Nt-1 ):
-        x = Xlist[:,i,None]
-        Xlist[:,i+1] = model( x, control( x ) )[:,0]
+        x = Xlist[:,:,i]
+        Xlist[:,:,i+1] = model( x, control( x ) )
 
     # Plot simulation results (2D).
     fig1, axspos = plt.subplots( 2,3 )
@@ -40,13 +40,15 @@ if __name__ == '__main__':
         for axs in axsrow:
             axs.plot( [tlist[0], tlist[-1]], [0,0],
                 color='indianred', linestyle='--' )
-            axs.plot( tlist, Xlist[i] )
+            for j in range( w ):
+                axs.plot( tlist, Xlist[i,j,:] )
             i = i + 1
     for axsrow in axsvel:
         for axs in axsrow:
             axs.plot( [tlist[0], tlist[-1]], [0,0],
                 color='indianred', linestyle='--' )
-            axs.plot( tlist, Xlist[i] )
+            for j in range( w ):
+                axs.plot( tlist, Xlist[i,j,:] )
             i = i + 1
 
     # Plot simulation results (3D).
@@ -54,9 +56,10 @@ if __name__ == '__main__':
     datalists = [Xlist[(k-3):k] for k in range( 3,n+1,3 )]
     for i, X in enumerate( datalists ):
         axs = fig3.add_subplot( 2, 2, i+1, projection='3d' )
-        axs.plot( X[0], X[1], X[2] )
-        axs.plot( X[0,-1], X[1,-1], X[2,-1],
-            marker='x', color='indianred' )
+        for j in range( w ):
+            axs.plot( X[0,j], X[1,j], X[2,j] )
+            axs.plot( X[0,j,-1], X[1,j,-1], X[2,j,-1],
+                marker='x', color='indianred' )
 
     # Show generateed plots.
     plt.show()

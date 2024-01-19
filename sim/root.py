@@ -16,43 +16,47 @@ dt = 1e-3       # Simulation time-step [s].
 def rotx(theta):
     R = np.array( [
         [1, 0, 0],
-        [0, np.cos(theta[0]), -np.sin(theta[0])],
-        [0, np.sin(theta[0]),  np.cos(theta[0])]
+        [0, np.cos( theta ), -np.sin( theta )],
+        [0, np.sin( theta ),  np.cos( theta )]
     ] )
     return R
 
 # Rotation about the y-axis.
 def roty(theta):
     R = np.array( [
-        [np.cos(theta[0]), 0, -np.sin(theta[0])],
+        [np.cos( theta ), 0, -np.sin( theta )],
         [0, 1, 0],
-        [np.sin(theta[0]), 0,  np.cos(theta[0])]
+        [np.sin( theta ), 0,  np.cos( theta )]
     ] )
     return R
 
 # Rotation about the z-axis.
 def rotz(theta):
     R = np.array( [
-        [np.cos(theta[0]), -np.sin(theta[0]), 0],
-        [np.cos(theta[0]),  np.sin(theta[0]), 0],
+        [np.cos( theta ), -np.sin( theta ), 0],
+        [np.cos( theta ),  np.sin( theta ), 0],
         [0, 0, 1]
     ] )
     return R
 
 # Hummingbird model function.
-def model(x, u):
+def model(X, U):
     # Lift force.
-    F = np.array( [[0],[0],u[0]] )
+    w = X.shape[1]
+    F = np.vstack( (np.zeros( (2,w) ), U[0]) )
     G = np.array( [[0],[0],[M*g]] )
 
     # First derivative.
-    dx = x[round( n/2 ):]
+    dX = X[round( n/2 ):]
 
     # Second derivative.
-    ddx = np.vstack( (
-        rotx( x[3] )@roty( x[4] )@rotz( x[5] )@F + G,
-        u[1:]
-    ) ) - c*dx
+    ddX = np.empty( (round( n/2 ),w) )
+    for i in range( w ):
+        ddx = np.vstack( (
+            rotx( X[3,i] )@roty( X[4,i] )@rotz( X[5,i] )@F[:,i,None] + G,
+            U[1:,i,None]
+        ) ) - c*dX[:,i,None]
+        ddX[:,i] = ddx[:,0]
 
     # Return next value of simulation.
-    return x + dt*np.vstack( (dx, ddx) )
+    return X + dt*np.vstack( (dX, ddX) )
