@@ -41,25 +41,30 @@ if __name__ == '__main__':
             axs.plot( [tlist[0], tlist[-1]], [0,0],
                 color='indianred', linestyle='--' )
             for j in range( w ):
-                axs.plot( tlist, Xlist[i,j,:] )
+                axs.plot( tlist, Xlist[i,j] )
             i = i + 1
     for axsrow in axsvel:
         for axs in axsrow:
             axs.plot( [tlist[0], tlist[-1]], [0,0],
                 color='indianred', linestyle='--' )
             for j in range( w ):
-                axs.plot( tlist, Xlist[i,j,:] )
+                axs.plot( tlist, Xlist[i,j] )
             i = i + 1
 
     # Plot simulation results (3D).
     fig3 = plt.figure()
-    datalists = [Xlist[(k-3):k] for k in range( 3,n+1,3 )]
-    for i, X in enumerate( datalists ):
+    # datalists = [Xlist[(k-3):k] for k in range( 3,n+1,3 )]
+    for i, k in enumerate( range( 3,n+1,3 ) ):
+        X = Xlist[(k-3):k]
         axs = fig3.add_subplot( 2, 2, i+1, projection='3d' )
         for j in range( w ):
             axs.plot( X[0,j], X[1,j], X[2,j] )
             axs.plot( X[0,j,-1], X[1,j,-1], X[2,j,-1],
                 marker='x', color='indianred' )
+        axs.set_xlabel( '$x_{%i}$'%(k-2) )
+        axs.set_ylabel( '$x_{%i}$'%(k-1) )
+        axs.set_zlabel( '$x_{%i}$'%(k-0) )
+        axs.axis( 'equal' )
 
     # Show generateed plots.
     plt.show()
