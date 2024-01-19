@@ -32,20 +32,26 @@ if __name__ == '__main__':
         x = Xlist[:,i,None]
         Xlist[:,i+1] = model( x, control( x ) )[:,0]
 
-    # Plot simulation results.
-    fig, axspos = plt.subplots( 2,3 )
-    fig, axsvel = plt.subplots( 2,3 )
-    i = 0
-    for axsrow in axspos:
-        for axs in axsrow:
-            axs.plot( [tlist[0], tlist[-1]], [0,0],
-                color='indianred', linestyle='--' )
-            axs.plot( tlist, Xlist[i] )
-            i = i + 1
-    for axsrow in axsvel:
-        for axs in axsrow:
-            axs.plot( [tlist[0], tlist[-1]], [0,0],
-                color='indianred', linestyle='--' )
-            axs.plot( tlist, Xlist[i] )
-            i = i + 1
+    # Plot simulation results (2D).
+    # fig, axspos = plt.subplots( 2,3 )
+    # fig, axsvel = plt.subplots( 2,3 )
+    # i = 0
+    # for axsrow in axspos:
+    #     for axs in axsrow:
+    #         axs.plot( [tlist[0], tlist[-1]], [0,0],
+    #             color='indianred', linestyle='--' )
+    #         axs.plot( tlist, Xlist[i] )
+    #         i = i + 1
+    # for axsrow in axsvel:
+    #     for axs in axsrow:
+    #         axs.plot( [tlist[0], tlist[-1]], [0,0],
+    #             color='indianred', linestyle='--' )
+    #         axs.plot( tlist, Xlist[i] )
+    #         i = i + 1
+
+    # Plot simulation results (3D).
+    fig = plt.figure()
+    print( type( fig ) )
+    axs = fig.add_subplot( projection='3d' )
+    axs.plot( Xlist[:3] )
     plt.show()
