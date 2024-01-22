@@ -13,7 +13,7 @@ def control(X):
         (k*X[2] + c*X[8] - M*g),
         (k*X[3] + c*X[9]) + (h*X[1] + r*X[7]),
         (k*X[4] + c*X[10]) + (h*X[0] + r*X[6]),
-        (k*X[5] + c*X[11])
+        0*(k*X[5] + c*X[11])
     ] )
     return U
 
@@ -25,8 +25,8 @@ if __name__ == '__main__':
     # Date set initialization.
     A = np.pi
     Xlist = np.empty( (n,w,Nt) )
-    Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
-    # Xlist[:,:,0] = np.array( [[np.pi*(i==3)] for i in range( n )] )
+    # Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
+    Xlist[:,:,0] = np.array( [[A*(i in [0,5])] for i in range( n )] )
     # print( Xlist[:,:,0] )
 
     # Simulation block.
