@@ -17,26 +17,6 @@ def control(X):
     ] )
     return U
 
-# # Testing model.
-# def model2(X, U):
-#     # Lift force.
-#     w = X.shape[1]
-
-#     # First derivative.
-#     dX = X[round( n/2 ):]
-
-#     # Second derivative.
-#     ddX = np.empty( (round( n/2 ),w) )
-#     for i in range( w ):
-#         ddx = np.vstack( (
-#             U[0]*( np.sin( X[3,i] )*np.sin( X[5,i] ) + np.cos( X[3,i] )*np.sin( X[4,i] )*np.cos( X[5,i] )),
-#             U[0]*(-np.sin( X[3,i] )*np.cos( X[5,i] ) + np.cos( X[3,i] )*np.sin( X[4,i] )*np.sin( X[5,i] )),
-#             U[0]*( np.cos( X[3,i] )*np.cos( X[4,i] )) + M*g,
-#             U[1:,i,None]
-#         ) ) - c*dX[:,i,None]
-#         ddX[:,i] = ddx[:,0]
-#     return X + dt*np.vstack( (dX, ddX) )
-
 if __name__ == '__main__':
     # Simulation length.
     T = 30;  Nt = round( T/dt ) + 1
@@ -45,6 +25,7 @@ if __name__ == '__main__':
     # Date set initialization.
     A = np.pi
     Xlist = np.empty( (n,w,Nt) )
+    # Xlist[:,:,0] = np.zeros( (n,w) )
     Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
     # Xlist[:,:,0] = np.array( [[A*(i in [1,5])] for i in range( n )] )
     # print( Xlist[:,:,0] )
