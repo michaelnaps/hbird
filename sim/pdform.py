@@ -23,7 +23,7 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = np.pi
+    A = np.pi/4
     Xlist = np.empty( (n,w,Nt) )
     # Xlist[:,:,0] = np.zeros( (n,w) )
     Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
