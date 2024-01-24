@@ -1,6 +1,6 @@
 from root import *
 
-w = 10
+w = 1
 
 k = -10.0
 c = -2.50
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     Xlist = np.empty( (n,w,Nt) )
     # Xlist[:,:,0] = np.zeros( (n,w) )
     Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
-    # Xlist[:,:,0] = np.array( [[A*(i in [1,5])] for i in range( n )] )
+    # Xlist[:,:,0] = np.array( [[A*(i in [3,4])] for i in range( n )] )
     # print( Xlist[:,:,0] )
 
     # Simulation block.
