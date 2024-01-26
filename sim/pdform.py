@@ -1,6 +1,6 @@
 from root import *
 
-w = 10
+w = 100
 
 k = -10.0
 c = -2.50
@@ -17,13 +17,18 @@ def control(X):
     ] )
     return U
 
+# Lyapunov candidate function.
+def lyapunovCandidate(x):
+    V = x.T@x
+    return V
+
 if __name__ == '__main__':
     # Simulation length.
     T = 30;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = np.pi/4
+    A = 2*np.pi
     Xlist = np.empty( (n,w,Nt) )
     # Xlist[:,:,0] = np.zeros( (n,w) )
     Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
@@ -31,9 +36,20 @@ if __name__ == '__main__':
     # print( Xlist[:,:,0] )
 
     # Simulation block.
-    for i in range( Nt-1 ):
-        x = Xlist[:,:,i]
-        Xlist[:,:,i+1] = model( x, control( x ) )
+    T = 1
+    for t in range( Nt-1 ):
+        for i, x in enumerate( Xlist[:,:,t].T ):
+            if lyapunovCandidate( x[:,None] ) > 1e3:
+                Xlist[:,i,t+1] = np.inf*np.ones( (n,) )
+                continue
+            xn = model( x[:,None], control( x[:,None] ) )
+            Xlist[:,i,t+1] = xn[:,0]
+
+        # Print completed time-step.
+        if ( (t+1)*dt ) % T == 0:
+            print( f"Time: {(t+1)*dt}" )
+
+    # Label broken positions.
 
     # Plot simulation results (2D).
     fig1, axspos = plt.subplots( 2,3 )
