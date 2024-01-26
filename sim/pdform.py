@@ -1,11 +1,13 @@
 from root import *
 
-w = 100
+w = 10
 
 k = -10.0
 c = -2.50
 h = 1/-k
 r = 1/-c
+
+TOL = 50e3
 
 # PD controller.
 def control(X):
@@ -24,7 +26,7 @@ def lyapunovCandidate(x):
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 30;  Nt = round( T/dt ) + 1
+    T = 10;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
@@ -39,7 +41,7 @@ if __name__ == '__main__':
     T = 1
     for t in range( Nt-1 ):
         for i, x in enumerate( Xlist[:,:,t].T ):
-            if lyapunovCandidate( x[:,None] ) > 1e3:
+            if lyapunovCandidate( x[:,None] ) > TOL:
                 Xlist[:,i,t+1] = np.inf*np.ones( (n,) )
                 continue
             xn = model( x[:,None], control( x[:,None] ) )
@@ -49,7 +51,8 @@ if __name__ == '__main__':
         if ( (t+1)*dt ) % T == 0:
             print( f"Time: {(t+1)*dt}" )
 
-    # Label broken positions.
+    # Label broken initial positions.
+    slist = np.isfinite( np.sum( Xlist[:,:,-1], axis=0 ) )
 
     # Plot simulation results (2D).
     fig1, axspos = plt.subplots( 2,3 )
