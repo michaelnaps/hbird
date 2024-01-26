@@ -1,11 +1,11 @@
 from root import *
 
-w = 1
+w = 10
 
 k = -10.0
 c = -2.50
-h = 1/5.00
-r = 1/1.00 # -1/250
+h = 1/-k
+r = 1/-c
 
 # PD controller.
 def control(X):
