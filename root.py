@@ -9,7 +9,7 @@ m = 4           # Dimensions of controller.
 M = 1.00        # Center of mass [g].
 g = -9.81       # Gravity coefficient [m/s^2].
 c = 1e-1        # Coefficient of air friction.
-dt = 1e-4       # Simulation time-step [s].
+dt = 1e-3       # Simulation time-step [s].
 
 # 3-D rotation functions.
 # Rotation about the x-axis.
