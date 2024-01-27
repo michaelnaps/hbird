@@ -1,7 +1,7 @@
 from root import *
 from initial import *
 
-w = 4
+w = 15
 
 k = -10.0
 c = -2.50
