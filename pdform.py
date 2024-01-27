@@ -1,4 +1,5 @@
 from root import *
+from initial import *
 
 w = 10
 
@@ -30,12 +31,9 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = 2*np.pi
+    A = 4*np.pi
     Xlist = np.empty( (n,w,Nt) )
-    # Xlist[:,:,0] = np.zeros( (n,w) )
-    Xlist[:,:,0] = 2*A*np.random.rand( n,w ) - A
-    # Xlist[:,:,0] = np.array( [[A*(i in [3,4])] for i in range( n )] )
-    # print( Xlist[:,:,0] )
+    Xlist[:,:,0] = initeven( n,w,A,1 )
 
     # Simulation block.
     T = 1
