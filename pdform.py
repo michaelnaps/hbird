@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # Date set initialization.
     A = 4*np.pi
     Xlist = np.empty( (n,w,Nt) )
-    Xlist[:,:,0] = initeven( n,w,A,1 )
+    Xlist[:,:,0] = initeven( n,w,A,[1,5] )
 
     # Simulation block.
     T = 1
