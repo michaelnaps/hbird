@@ -35,7 +35,8 @@ if __name__ == '__main__':
 
     # Date set initialization.
     A = 4*np.pi
-    Xlist, w = initmesh( n,w,Nt,A,[1,5] )
+    ilist = [1,5]
+    Xlist, w = initmesh( n,w,Nt,A,ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
@@ -93,8 +94,12 @@ if __name__ == '__main__':
         axs.axis( 'equal' )
 
     # Plot Lyapunov candidate function.
-    fig4, axslcf = plt.subplots()
-    axslcf.plot( tlist, Vlist.T )
+    fig4, axslcf = plt.subplots( 1,2 )
+    axslcf[0].plot( tlist, Vlist.T )
+    colors = ['cornflowerblue', 'indianred']
+    for i, x0 in enumerate( Xlist[:,:,0].T ):
+        axslcf[1].plot( x0[ilist[0]-1], x0[ilist[1]-1], marker='x',
+            color=colors[0] if slist[i] else colors[1] )
 
     # Show generateed plots.
     plt.show()
