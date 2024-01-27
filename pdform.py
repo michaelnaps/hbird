@@ -8,7 +8,7 @@ c = -2.50
 h = 1/-k
 r = 1/-c
 
-TOL = 50e3
+TOL = 10e3
 
 # PD controller.
 def control(X):
@@ -21,8 +21,11 @@ def control(X):
     return U
 
 # Lyapunov candidate function.
-def lyapunovCandidate(x):
-    V = x.T@x
+def lyapunovCandidate(X):
+    n, w = X.shape
+    V = np.empty( (1,w) )
+    for i, x in enumerate( X.T ):
+        V[:,i] = x[:,None].T@x[:,None]
     return V
 
 if __name__ == '__main__':
@@ -35,6 +38,10 @@ if __name__ == '__main__':
     Xlist = np.empty( (n,w,Nt) )
     Xlist[:,:,0] = initeven( n,w,A,[1,5] )
 
+    # Candidate function initialization.
+    Vlist = np.empty( (w,Nt) )
+    Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
+
     # Simulation block.
     T = 1
     for t in range( Nt-1 ):
@@ -44,6 +51,7 @@ if __name__ == '__main__':
                 continue
             xn = model( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
+        Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
         # Print completed time-step.
         if ( (t+1)*dt ) % T == 0:
@@ -73,7 +81,6 @@ if __name__ == '__main__':
 
     # Plot simulation results (3D).
     fig3 = plt.figure()
-    # datalists = [Xlist[(k-3):k] for k in range( 3,n+1,3 )]
     for i, k in enumerate( range( 3,n+1,3 ) ):
         X = Xlist[(k-3):k]
         axs = fig3.add_subplot( 2, 2, i+1, projection='3d' )
@@ -85,6 +92,10 @@ if __name__ == '__main__':
         axs.set_ylabel( '$x_{%i}$'%(k-1) )
         axs.set_zlabel( '$x_{%i}$'%(k-0) )
         axs.axis( 'equal' )
+
+    # Plot Lyapunov candidate function.
+    fig4, axslcf = plt.subplots()
+    axslcf.plot( tlist, Vlist.T )
 
     # Show generateed plots.
     plt.show()
