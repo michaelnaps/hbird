@@ -7,7 +7,7 @@ def initseries(X0, Nt=None):
     Xlist[:,:,0] = X0
     return Xlist
 
-def initrand(n=12, w=1, Nt=None, A=1):
+def initrand(n=12, w=1, Nt=None, A=1, ilist=None):
     X0 = 2*A*np.random.rand( n, w ) - A
     return initseries( X0, Nt ), w
 

@@ -1,7 +1,7 @@
 from root import *
 from initial import *
 
-w = 25
+w = 10
 
 k = -10.0
 c = -2.50
@@ -34,8 +34,8 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = 10*np.pi;  ilist = [1,5]
-    Xlist, w = initmesh( n,w,Nt,A,ilist )
+    A = np.pi/4;  ilist = [1,5]
+    Xlist, w = initmesh( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
