@@ -1,14 +1,14 @@
 from root import *
 from initial import *
 
-w = 15
+w = 5
 
 k = -10.0
 c = -2.50
 h = 1/-k
 r = 1/-c
 
-TOL = np.inf
+TOL = 2.5e4
 
 # PD controller.
 def control(X):
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = 2*np.pi;  ilist = [1,5]
+    A = np.pi;  ilist = [1,5]
     Xlist, w = initmesh( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
@@ -63,48 +63,13 @@ if __name__ == '__main__':
     slist = np.isfinite( np.sum( Xlist[:,:,-1], axis=0 ) )
 
     # Plot simulation results (2D).
-    fig1, axspos = plt.subplots( 2,3 )
-    fig2, axsvel = plt.subplots( 2,3 )
-    i = 0
-    for axsrow in axspos:
-        for axs in axsrow:
-            axs.plot( [tlist[0], tlist[-1]], [0,0],
-                linestyle='--', color='indianred' )
-            for j in range( w ):
-                if slist[j]:
-                    axs.plot( tlist, Xlist[i,j] )
-            i = i + 1
-    for axsrow in axsvel:
-        for axs in axsrow:
-            axs.plot( [tlist[0], tlist[-1]], [0,0],
-                linestyle='--', color='indianred' )
-            for j in range( w ):
-                if slist[j]:
-                    axs.plot( tlist, Xlist[i,j] )
-            i = i + 1
+    (fig1, fig2), (axs1, axs2) = plotPosVel2D( tlist, Xlist, slist=slist )
 
     # Plot simulation results (3D).
-    fig3 = plt.figure()
-    for i, k in enumerate( range( 3,n+1,3 ) ):
-        X = Xlist[(k-3):k]
-        axs = fig3.add_subplot( 2, 2, i+1, projection='3d' )
-        for j in range( w ):
-            if slist[j]:
-                axs.plot( X[0,j], X[1,j], X[2,j] )
-                axs.plot( X[0,j,-1], X[1,j,-1], X[2,j,-1],
-                    marker='x', color='indianred' )
-        axs.set_xlabel( '$x_{%i}$'%(k-2) )
-        axs.set_ylabel( '$x_{%i}$'%(k-1) )
-        axs.set_zlabel( '$x_{%i}$'%(k-0) )
-        axs.axis( 'equal' )
+    fig3, axs3 = plotPosVel3D( Xlist, slist=slist )
 
     # Plot Lyapunov candidate function.
-    fig4, axslcf = plt.subplots( 1,2 )
-    axslcf[0].plot( tlist, Vlist.T )
-    colors = ['cornflowerblue', 'indianred']
-    for i, x0 in enumerate( Xlist[:,:,0].T ):
-        axslcf[1].plot( x0[ilist[0]-1], x0[ilist[1]-1], marker='x',
-            color=colors[0] if slist[i] else colors[1] )
+    fig4, axs4 = plotLyapunovCandidate( tlist, Xlist, Vlist, ilist, slist )
 
     # Show generateed plots.
     plt.show()

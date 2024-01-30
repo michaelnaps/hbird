@@ -60,3 +60,82 @@ def model(X, U):
 
     # Return next value of simulation.
     return X + dt*np.vstack( (dX, ddX) )
+
+# Plot functions.
+# State plots split between two rows.
+def plotStates(tlist, Xlist, slist=None):
+    # Plot dimensions and initialization.
+    n, w, _ = Xlist.shape
+    r = round( n/2 )
+    fig, axslist = plt.subplots( 2, r )
+
+    # If slist=None, show every trajectory.
+    slist = [True for j in range( w )] if slist is None else slist
+
+    # Iterate through axes and plot states.
+    i = 0
+    for axsrow in axslist:
+        for axs in axsrow:
+            axs.plot( [tlist[0], tlist[-1]], [0,0],
+                linestyle='--', color='indianred' )
+            for j in range( w ):
+                if slist[j]:
+                    axs.plot( tlist, Xlist[i,j] )
+            i = i + 1
+
+    # Return figure variables.
+    return fig, axslist
+
+
+# System state plots.
+def plotPosVel2D(tlist, Xlist, slist=None):
+    # Plot position and velocity separately.
+    fig1, axspos = plotStates( tlist, Xlist[:6], slist=slist )
+    fig2, axsvel = plotStates( tlist, Xlist[6:], slist=slist )
+
+    # Return figure variables.
+    return (fig1, fig2), (axspos, axsvel)
+
+# System state plots in 3-D.
+def plotPosVel3D(Xlist, slist=None):
+    # If slist=None, show every trajectory.
+    slist = [True for j in range( w )] if slist is None else slist
+
+    # Initialize plot variable.
+    n, w, _ = Xlist.shape
+    fig = plt.figure()
+
+    # Iterate through adding 3-D axes and labels.
+    axslist = []
+    for i, k in enumerate( range( 3,n+1,3 ) ):
+        X = Xlist[(k-3):k]
+        axs = fig.add_subplot( 2, 2, i+1, projection='3d' )
+        for j in range( w ):
+            if slist[j]:
+                axs.plot( X[0,j], X[1,j], X[2,j] )
+                axs.plot( X[0,j,-1], X[1,j,-1], X[2,j,-1],
+                    marker='x', color='indianred' )
+        axs.set_xlabel( '$x_{%i}$'%(k-2) )
+        axs.set_ylabel( '$x_{%i}$'%(k-1) )
+        axs.set_zlabel( '$x_{%i}$'%(k-0) )
+        axs.axis( 'equal' )
+        axslist = axslist + [axs]
+
+    # Return plot variables.
+    return fig, axslist
+
+def plotLyapunovCandidate(tlist, Xlist, Vlist, ilist, slist):
+    # Initialize figure variables.
+    fig, axslist = plt.subplots( 1,2 )
+
+    # Plot candidate trends.
+    axslist[0].plot( tlist, Vlist.T )
+
+    # Plot initial conditions with appropriate colors.
+    colors = ['cornflowerblue', 'indianred']
+    for i, x0 in enumerate( Xlist[:,:,0].T ):
+        axslist[1].plot( x0[ilist[0]-1], x0[ilist[1]-1], marker='x',
+            color=colors[0] if slist[i] else colors[1] )
+
+    # Return figure variables.
+    return fig, axslist
