@@ -1,14 +1,14 @@
 from root import *
 from initial import *
 
-w = 25
+w = 15
 
 k = -10.0
 c = -2.50
 h = 1/-k
 r = 1/-c
 
-TOL = 10e3
+TOL = np.inf
 
 # PD controller.
 def control(X):
@@ -30,12 +30,12 @@ def lyapunovCandidate(X):
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 30;  Nt = round( T/dt ) + 1
+    T = 10;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = np.pi;  ilist = [1,5]
-    Xlist, w = initrand( n, w, Nt, A, ilist )
+    A = 2*np.pi;  ilist = [1,5]
+    Xlist, w = initmesh( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )

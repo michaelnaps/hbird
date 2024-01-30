@@ -53,7 +53,7 @@ def model(X, U):
     ddX = np.empty( (round( n/2 ),w) )
     for i in range( w ):
         ddx = np.vstack( (
-            rotx( X[3,i] )@roty( X[4,i] )@rotz( X[5,i] )@F[:,i,None] + G,
+            rotz( X[5,i] )@roty( X[4,i] )@rotx( X[3,i] )@F[:,i,None] + G,
             U[1:,i,None]
         ) ) - c*dX[:,i,None]
         ddX[:,i] = ddx[:,0]
