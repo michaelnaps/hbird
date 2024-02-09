@@ -30,11 +30,11 @@ def lyapunovCandidate(X):
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 10;  Nt = round( T/dt ) + 1
+    T = 15;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = np.pi;  ilist = [1,5]
+    A = 2*np.pi;  ilist = [1,5]
     Xlist, w = initmesh( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             if lyapunovCandidate( x[:,None] ) > TOL:
                 Xlist[:,i,t+1:] = np.inf*np.ones( (n,Nt-(t+1)) )
                 continue
-            xn = model( x[:,None], control( x[:,None] ) )
+            xn = model2( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 

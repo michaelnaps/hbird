@@ -50,7 +50,7 @@ def model(X, U):
     dX = X[round( n/2 ):]
 
     # Second derivative.
-    ddX = np.empty( (round( n/2 ),w) )
+    ddX = np.empty( (round( n/2 ), w) )
     for i in range( w ):
         ddx = np.vstack( (
             rotz( X[5,i] )@roty( X[4,i] )@rotx( X[3,i] )@F[:,i,None] + G,
@@ -60,6 +60,31 @@ def model(X, U):
 
     # Return next value of simulation.
     return X + dt*np.vstack( (dX, ddX) )
+
+# Testing algebraic model function.
+def model2(X, U):
+    # Lift force.
+    w = X.shape[1]
+    F = U[0]
+    G = M*g
+
+    # First derivative.
+    dX = X[round( n/2 ):]
+
+    # Second derivative.
+    ddX = np.empty( (round( n/2 ), w) )
+    for i in range( w ):
+        ddx = np.vstack( (
+            F*(np.sin( X[3,i] )*np.sin( X[5,i] ) - np.cos( X[3,i] )*np.sin( X[4,i] )*np.cos( X[5,i] )),
+            F*(-np.sin( X[3,i] )*np.cos( X[5,i] ) - np.cos( X[3,i] )*np.sin( X[4,i] )*np.sin( X[5,i] )),
+            F*(np.cos( X[3,i] )*np.cos( X[4,i] )) + G,
+            U[1:,i,None]
+        ) ) - c*dX[:,i,None]
+        ddX[:,i] = ddx[:,0]
+
+    # Return new states.
+    return X + dt*np.vstack( (dX, ddX) )
+
 
 # Plot functions.
 # State plots split between two rows.
