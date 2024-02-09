@@ -51,7 +51,7 @@ if __name__ == '__main__':
             if lyapunovCandidate( x[:,None] ) > TOL:
                 Xlist[:,i,t+1:] = np.inf*np.ones( (n,Nt-(t+1)) )
                 continue
-            xn = model2( x[:,None], control( x[:,None] ) )
+            xn = model( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
