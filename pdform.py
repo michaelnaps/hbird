@@ -41,6 +41,8 @@ if __name__ == '__main__':
     Vlist = np.empty( (w,Nt) )
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
+    # Testing rotation derivative...
+
     # Simulation block.
     Tstep = 1
     for t in range( Nt-1 ):

@@ -39,6 +39,20 @@ def rotz(theta):
     ] )
     return R
 
+# Cumulative rotation function.
+def rot(x):
+    R = rotz( x[2] )@roty( x[1] )@rotx( x[0] )
+    return R
+
+# Skew-symmetrix matrix.
+def skew(x):
+    y = np.array( [
+        [0, -x[2], x[1]],
+        [x[2], 0, -x[0]],
+        [-x[1], x[0], 0]
+    ] )
+    return y
+
 # Hummingbird model function.
 def model(X, U):
     # Lift force.
@@ -53,7 +67,7 @@ def model(X, U):
     ddX = np.empty( (round( n/2 ), w) )
     for i in range( w ):
         ddx = np.vstack( (
-            rotz( X[5,i] )@roty( X[4,i] )@rotx( X[3,i] )@F[:,i,None] + G,
+            rot( X[3:6,i] )@F[:,i,None] + G,
             U[1:,i,None]
         ) ) - c*dX[:,i,None]
         ddX[:,i] = ddx[:,0]
