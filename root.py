@@ -163,6 +163,7 @@ def plotPosVel3D(Xlist, slist=None):
     # Return plot variables.
     return fig, axslist
 
+# Candidate function plot for all initial conditions.
 def plotLyapunovCandidate(tlist, Xlist, Vlist, ilist, slist):
     # Initialize figure variables.
     fig, axslist = plt.subplots( 1,2 )
@@ -178,3 +179,14 @@ def plotLyapunovCandidate(tlist, Xlist, Vlist, ilist, slist):
 
     # Return figure variables.
     return fig, axslist
+
+# Error in rotation derivative for all initial conditions.
+def plotRotationError(tlist, Rlist):
+    # Initialize figure variables.
+    fig, axs = plt.subplots()
+
+    # Plot rotation derivative error.
+    axs.plot( tlist, Rlist.T )
+
+    # Return figure variables.
+    return fig, axs
