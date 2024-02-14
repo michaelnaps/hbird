@@ -64,6 +64,7 @@ if __name__ == '__main__':
             R = rot( x[3:6] )
             S = skew( x[9:12] )
             Rn = rot( xn[3:6] )
+            # Rlist[i,t+1] = np.linalg.norm( Rn.T@xn[6:9] )
             Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
 
         # Calculate LC for each initial condition.
