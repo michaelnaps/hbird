@@ -55,14 +55,18 @@ if __name__ == '__main__':
             if lyapunovCandidate( x[:,None] ) > TOL:
                 Xlist[:,i,t+1:] = np.inf*np.ones( (n,Nt-(t+1)) )
                 continue
+
             # Update state and save.
             xn = model( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
+
             # Save error in rotation derivative.
             R = rot( x[3:6] )
-            Rn = rot( xn[3:6] )
             S = skew( x[9:12] )
+            Rn = rot( xn[3:6] )
             Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
+
+        # Calculate LC for each initial condition.
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
         # Print completed time-step.
