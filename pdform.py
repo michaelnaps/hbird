@@ -30,7 +30,7 @@ def lyapunovCandidate(X):
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 15;  Nt = round( T/dt ) + 1
+    T = 1;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
@@ -60,7 +60,9 @@ if __name__ == '__main__':
             Xlist[:,i,t+1] = xn[:,0]
             # Save error in rotation derivative.
             R = rot( x[3:6] )
-            Rlist[i,t+1] = np.linalg.norm( R - (R + dt*R@skew( x[3:6] )) )
+            Rn = rot( xn[3:6] )
+            S = skew( x[9:12] )
+            Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
         # Print completed time-step.

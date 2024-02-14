@@ -41,11 +41,13 @@ def rotz(theta):
 
 # Cumulative rotation function.
 def rot(x):
+    x = x.T[0] if len( x.shape ) > 1 else x
     R = rotz( x[2] )@roty( x[1] )@rotx( x[0] )
     return R
 
 # Skew-symmetrix matrix.
 def skew(x):
+    x = x.T[0] if len( x.shape ) > 1 else x
     y = np.array( [
         [0, -x[2], x[1]],
         [x[2], 0, -x[0]],
