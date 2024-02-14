@@ -42,6 +42,8 @@ if __name__ == '__main__':
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
     # Testing rotation derivative...
+    Rerror = np.empty( (w,Nt) )
+    Rerror[:,0] = np.zeros( (w,) )
 
     # Simulation block.
     Tstep = 1
@@ -53,8 +55,12 @@ if __name__ == '__main__':
             if lyapunovCandidate( x[:,None] ) > TOL:
                 Xlist[:,i,t+1:] = np.inf*np.ones( (n,Nt-(t+1)) )
                 continue
+            # Update state and save.
             xn = model( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
+            # Save error in rotation derivative.
+            R = rot( x[3:6] )
+            Rerror[i,t+1] = np.linalg.norm( R - (R + dt*R@skew( x[3:6] )) )
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
         # Print completed time-step.
@@ -72,6 +78,10 @@ if __name__ == '__main__':
 
     # Plot Lyapunov candidate function.
     fig4, axs4 = plotLyapunovCandidate( tlist, Xlist, Vlist, ilist, slist )
+
+    # Plot rotation derivative error.
+    fig, axs = plt.subplots()
+    axs.plot( tlist, Rerror.T )
 
     # Show generateed plots.
     plt.show()
