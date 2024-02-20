@@ -23,27 +23,34 @@ def control(X):
 # Lyapunov candidate function.
 def lyapunovCandidate(X):
     n, w = X.shape
-    V = np.empty( (1,w) )
+    V1 = np.empty( (1,w) )
+    V2 = np.empty( (1,w) )
+    V3 = np.empty( (1,w) )
+    V4 = np.empty( (1,w) )
     for i, x in enumerate( X.T ):
-        V[:,i] = x[:,None].T@x[:,None]
-    return V
+        R = rot( x[3:6,None] )
+        v = x[0:3,None];  dv = x[3:6,None]
+        w = x[6:9,None];  dw = x[9:12,None]
+        V1[:,i] = v.T@v;  V2[:,i] = dv.T@R@dv
+        V3[:,i] = w.T@w;  V4[:,i] = dw.T@dw
+    return V1 + V2 + V3 + V4
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 15;  Nt = round( T/dt ) + 1
+    T = 10;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = 2*np.pi;  ilist = [1,5]
-    Xlist, w = initmesh( n, w, Nt, A, ilist )
+    A = np.pi;  ilist = [1,5]
+    Xlist, w = initrand( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
     # # Testing rotation derivative...
-    # Rlist = np.empty( (w,Nt) )
-    # Rlist[:,0] = np.zeros( (w,) )
+    Rlist = np.empty( (w,Nt) )
+    Rlist[:,0] = np.zeros( (w,) )
 
     # Simulation block.
     Tstep = 1
@@ -53,7 +60,7 @@ if __name__ == '__main__':
             if not np.isfinite( x[0] ):
                 continue
             if lyapunovCandidate( x[:,None] ) > TOL:
-                Xlist[:,i,t+1:] = np.inf*np.ones( (n,Nt-(t+1)) )
+                Xlist[:,i,t+1:] = np.inf
                 continue
 
             # Update state and save.
@@ -61,11 +68,18 @@ if __name__ == '__main__':
             Xlist[:,i,t+1] = xn[:,0]
 
             # # Save error in rotation derivative.
-            # R = rot( x[3:6] )
+            R = rot( x[3:6] )
             # S = skew( x[9:12] )
             # Rn = rot( xn[3:6] )
             # # Rlist[i,t+1] = np.linalg.norm( Rn.T@xn[6:9] )
             # Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
+
+            # Test trace equation.
+            Rx = rotx( x[3] );  Ry = roty( x[4] );  Rz = rotz( x[5] )
+            trR = np.sum( [[ a[j]*d[i]
+                for i, a in enumerate( Rz ) ]
+                    for j, d in enumerate( Ry@Rx ) ] )
+            Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
 
         # Calculate LC for each initial condition.
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
@@ -87,7 +101,7 @@ if __name__ == '__main__':
     fig4, axs4 = plotLyapunovCandidate( tlist, Xlist, Vlist, ilist, slist )
 
     # # Plot rotation derivative error.
-    # fig5, axs5 = plotRotationError( tlist, Rlist )
+    fig5, axs5 = plotRotationError( tlist, Rlist )
 
     # Show generateed plots.
     plt.show()
