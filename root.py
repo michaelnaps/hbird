@@ -179,6 +179,10 @@ def plotLyapunovCandidate(tlist, Xlist, Vlist, ilist, slist):
         axslist[1].plot( x0[ilist[0]-1], x0[ilist[1]-1], marker='x',
             color=colors[0] if slist[i] else colors[1] )
 
+    # Figure labeling.
+    axslist[1].set_xlabel( f'$x_{ ilist[0] }$' )
+    axslist[1].set_ylabel( f'$x_{ ilist[1] }$' )
+
     # Return figure variables.
     return fig, axslist
 

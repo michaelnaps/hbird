@@ -110,4 +110,8 @@ if __name__ == '__main__':
     # fig5, axs5 = plotRotationError( tlist, Rlist )
 
     # Show generateed plots.
+    figlist = plt.get_fignums()
+    for i in figlist:
+        fig = plt.figure(i)
+        fig.tight_layout()
     plt.show()
