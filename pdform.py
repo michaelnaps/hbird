@@ -23,17 +23,20 @@ def control(X):
 # Lyapunov candidate function.
 def lyapunovCandidate(X):
     n, w = X.shape
-    V1 = np.empty( (1,w) )
-    V2 = np.empty( (1,w) )
-    V3 = np.empty( (1,w) )
-    V4 = np.empty( (1,w) )
+    V = np.empty( (1,w) )
+    # V1 = np.empty( (1,w) )
+    # V2 = np.empty( (1,w) )
+    # V3 = np.empty( (1,w) )
+    # V4 = np.empty( (1,w) )
     for i, x in enumerate( X.T ):
-        R = rot( x[3:6,None] )
-        v = x[0:3,None];  dv = x[3:6,None]
-        w = x[6:9,None];  dw = x[9:12,None]
-        V1[:,i] = v.T@v;  V2[:,i] = dv.T@dv
-        V3[:,i] = w.T@w;  V4[:,i] = dw.T@dw
-    return V1 + V2 + V3 + V4
+        V[:,i] = x[:,None].T@x[:,None]
+        # R = rot( x[3:6,None] )
+        # v = x[0:3,None];  dv = x[3:6,None]
+        # w = x[6:9,None];  dw = x[9:12,None]
+        # V1[:,i] = v.T@v;  V2[:,i] = dv.T@dv
+        # V3[:,i] = w.T@w;  V4[:,i] = dw.T@dw
+    # V = V1 + V2 + V3 + V4
+    return V
 
 if __name__ == '__main__':
     # Simulation length.
@@ -41,14 +44,14 @@ if __name__ == '__main__':
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
-    A = np.pi;  ilist = [1,5]
+    A = np.pi;  ilist = [2,6]
     Xlist, w = initmesh( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
-    # # # Testing rotation derivative...
+    # # Testing rotation derivative...
     # Rlist = np.empty( (w,Nt) )
     # Rlist[:,0] = np.zeros( (w,) )
 
@@ -75,10 +78,13 @@ if __name__ == '__main__':
             # Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
 
             # # Test trace equation.
+            # R = rot( x[3:6] )
             # Rx = rotx( x[3] );  Ry = roty( x[4] );  Rz = rotz( x[5] )
-            # trR = np.sum( [[ a[j]*d[i]
-            #     for i, a in enumerate( Rz ) ]
-            #         for j, d in enumerate( Ry@Rx ) ] )
+            # trR = 0
+            # for i in range( 3 ):
+            #     for j in range( 3 ):
+            #         for k in range( 3 ):
+            #             trR = trR + Rz[i,j]*Ry[k,j]*Rx[i,k]
             # Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
 
         # Calculate LC for each initial condition.
