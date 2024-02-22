@@ -45,15 +45,15 @@ if __name__ == '__main__':
 
     # Date set initialization.
     A = np.pi;  ilist = [2,6]
-    Xlist, w = initrand( n, w**2, Nt, A, ilist )
+    Xlist, w = initrand( n, w, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
-    # # Testing rotation derivative...
-    # Rlist = np.empty( (w,Nt) )
-    # Rlist[:,0] = np.zeros( (w,) )
+    # Testing rotation derivative...
+    Rlist = np.empty( (w,Nt) )
+    Rlist[:,0] = np.zeros( (w,) )
 
     # Simulation block.
     Tstep = 1
@@ -90,6 +90,13 @@ if __name__ == '__main__':
             #                         trR = trR + Rz[i1,i2]*Ry[i2,i3]*Rx[i3,i4]*Rz[i4,i5]*Ry[i5,i6]*Rx[i6,i1]
             # Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
 
+            # Test summed inversion equation.
+            I = np.eye( 3 )
+            R = rot( x[3:6] )
+            g = np.trace( R@R )
+            IRn = I - 1/(1 + g)*R@R
+            Rlist[i,t+1] = np.linalg.norm( np.linalg.inv( I + R@R ) - IRn )
+
         # Calculate LC for each initial condition.
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
 
@@ -109,8 +116,8 @@ if __name__ == '__main__':
     # Plot Lyapunov candidate function.
     fig4, axs4 = plotLyapunovCandidate( tlist, Xlist, Vlist, ilist, slist )
 
-    # # Plot rotation derivative error.
-    # fig5, axs5 = plotRotationError( tlist, Rlist )
+    # Plot rotation derivative error.
+    fig5, axs5 = plotRotationError( tlist, Rlist )
 
     # Show generateed plots.
     figlist = plt.get_fignums()
