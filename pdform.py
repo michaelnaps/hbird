@@ -90,12 +90,12 @@ if __name__ == '__main__':
             #                         trR = trR + Rz[i1,i2]*Ry[i2,i3]*Rx[i3,i4]*Rz[i4,i5]*Ry[i5,i6]*Rx[i6,i1]
             # Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
 
-            # Test summed inversion equation.
-            I = np.eye( 3 )
-            R = rot( x[3:6] )
-            g = np.trace( R@R )
-            IRn = I - 1/(1 + g)*R@R
-            Rlist[i,t+1] = np.linalg.norm( np.linalg.inv( I + R@R ) - IRn )
+            # # Test summed inversion equation.
+            # I = np.eye( 3 )
+            # R = rot( x[3:6] )
+            # g = np.trace( R@R )
+            # IRn = I - 1/(1 + g)*R@R
+            # Rlist[i,t+1] = np.linalg.norm( np.linalg.inv( I + R@R ) - IRn )
 
         # Calculate LC for each initial condition.
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
