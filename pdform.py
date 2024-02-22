@@ -40,12 +40,12 @@ def lyapunovCandidate(X):
 
 if __name__ == '__main__':
     # Simulation length.
-    T = 10;  Nt = round( T/dt ) + 1
+    T = 1;  Nt = round( T/dt ) + 1
     tlist = np.array( [i*dt for i in range( Nt )] )
 
     # Date set initialization.
     A = np.pi;  ilist = [2,6]
-    Xlist, w = initmesh( n, w, Nt, A, ilist )
+    Xlist, w = initrand( n, w**2, Nt, A, ilist )
 
     # Candidate function initialization.
     Vlist = np.empty( (w,Nt) )
@@ -78,13 +78,16 @@ if __name__ == '__main__':
             # Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
 
             # # Test trace equation.
-            # R = rot( x[3:6] )
+            # R = rot( x[3:6] )@rot( x[3:6] )
             # Rx = rotx( x[3] );  Ry = roty( x[4] );  Rz = rotz( x[5] )
             # trR = 0
-            # for i in range( 3 ):
-            #     for j in range( 3 ):
-            #         for k in range( 3 ):
-            #             trR = trR + Rz[i,j]*Ry[k,j]*Rx[i,k]
+            # for i1 in range( 3 ):
+            #     for i2 in range( 3 ):
+            #         for i3 in range( 3 ):
+            #             for i4 in range( 3 ):
+            #                 for i5 in range( 3 ):
+            #                     for i6 in range( 3 ):
+            #                         trR = trR + Rz[i1,i2]*Ry[i2,i3]*Rx[i3,i4]*Rz[i4,i5]*Ry[i5,i6]*Rx[i6,i1]
             # Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
 
         # Calculate LC for each initial condition.
