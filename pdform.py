@@ -51,9 +51,9 @@ if __name__ == '__main__':
     Vlist = np.empty( (w,Nt) )
     Vlist[:,0] = lyapunovCandidate( Xlist[:,:,0] )
 
-    # Testing rotation derivative...
-    Rlist = np.empty( (w,Nt) )
-    Rlist[:,0] = np.zeros( (w,) )
+    # # Testing rotation derivative...
+    # Rlist = np.empty( (w,Nt) )
+    # Rlist[:,0] = np.zeros( (w,) )
 
     # Simulation block.
     Tstep = 1
@@ -69,33 +69,6 @@ if __name__ == '__main__':
             # Update state and save.
             xn = model( x[:,None], control( x[:,None] ) )
             Xlist[:,i,t+1] = xn[:,0]
-
-            # # Save error in rotation derivative.
-            # R = rot( x[3:6] )
-            # S = skew( x[9:12] )
-            # Rn = rot( xn[3:6] )
-            # # Rlist[i,t+1] = np.linalg.norm( Rn.T@xn[6:9] )
-            # Rlist[i,t+1] = np.linalg.norm( Rn - (R + dt*R@S) )
-
-            # # Test trace equation.
-            # R = rot( x[3:6] )@rot( x[3:6] )
-            # Rx = rotx( x[3] );  Ry = roty( x[4] );  Rz = rotz( x[5] )
-            # trR = 0
-            # for i1 in range( 3 ):
-            #     for i2 in range( 3 ):
-            #         for i3 in range( 3 ):
-            #             for i4 in range( 3 ):
-            #                 for i5 in range( 3 ):
-            #                     for i6 in range( 3 ):
-            #                         trR = trR + Rz[i1,i2]*Ry[i2,i3]*Rx[i3,i4]*Rz[i4,i5]*Ry[i5,i6]*Rx[i6,i1]
-            # Rlist[i,t+1] = np.linalg.norm( np.trace( R ) - trR )
-
-            # # Test summed inversion equation.
-            # I = np.eye( 3 )
-            # R = rot( x[3:6] )
-            # g = np.trace( R@R )
-            # IRn = I - 1/(1 + g)*R@R
-            # Rlist[i,t+1] = np.linalg.norm( np.linalg.inv( I + R@R ) - IRn )
 
         # Calculate LC for each initial condition.
         Vlist[:,t+1] = lyapunovCandidate( Xlist[:,:,t+1] )
@@ -116,8 +89,8 @@ if __name__ == '__main__':
     # Plot Lyapunov candidate function.
     fig4, axs4 = plotLyapunovCandidate( tlist, Xlist, Vlist, ilist, slist )
 
-    # Plot rotation derivative error.
-    fig5, axs5 = plotRotationError( tlist, Rlist )
+    # # Plot rotation derivative error.
+    # fig5, axs5 = plotRotationError( tlist, Rlist )
 
     # Show generateed plots.
     figlist = plt.get_fignums()
